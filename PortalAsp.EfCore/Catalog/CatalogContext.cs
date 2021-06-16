@@ -4,7 +4,7 @@ using PortalModels.Catalog.Products;
 
 namespace PortalAsp.EfCore.Catalog
 {
-    class CatalogContext : DbContext
+    public class CatalogContext : DbContext
     {
         public CatalogContext(DbContextOptions<CatalogContext> opts)
             :base(opts) { }
@@ -17,12 +17,12 @@ namespace PortalAsp.EfCore.Catalog
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            CatalogContextHelper.DefineProduct(modelBuilder);
-            CatalogContextHelper.DefineCatalogMainCategory(modelBuilder);
-            CatalogContextHelper.DefineCatalogSubCategory(modelBuilder);
-            CatalogContextHelper.DefineManufacturer(modelBuilder);
             CatalogContextHelper.DefineProductCategory(modelBuilder);
             CatalogContextHelper.DefineImage(modelBuilder);
+            CatalogContextHelper.DefineCatalogSubCategory(modelBuilder);
+            CatalogContextHelper.DefineCatalogMainCategory(modelBuilder);
+            CatalogContextHelper.DefineManufacturer(modelBuilder);
+            CatalogContextHelper.DefineProduct(modelBuilder);
         }
     }
 }

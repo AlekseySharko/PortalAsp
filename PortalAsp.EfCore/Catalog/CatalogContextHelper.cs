@@ -21,8 +21,8 @@ namespace PortalAsp.EfCore.Catalog
                 .HasColumnType("NVARCHAR(150)")
                 .IsRequired();
             modelBuilder.Entity<Product>()
-                .Property(p => p.Category)
-                .IsRequired();
+                .HasIndex(p => p.Name)
+                .IsUnique();
         }
 
         public static void DefineCatalogMainCategory(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace PortalAsp.EfCore.Catalog
             modelBuilder.Entity<CatalogMainCategory>()
                 .Property(c => c.Name)
                 .HasColumnType("NVARCHAR(50)");
+            modelBuilder.Entity<CatalogMainCategory>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
         }
 
         public static void DefineCatalogSubCategory(ModelBuilder modelBuilder)
@@ -37,6 +40,9 @@ namespace PortalAsp.EfCore.Catalog
             modelBuilder.Entity<CatalogSubCategory>()
                 .Property(sc => sc.Name)
                 .HasColumnType("NVARCHAR(50)");
+            modelBuilder.Entity<CatalogSubCategory>()
+                .HasIndex(sc => sc.Name)
+                .IsUnique();
         }
 
         public static void DefineManufacturer(ModelBuilder modelBuilder)
@@ -44,6 +50,9 @@ namespace PortalAsp.EfCore.Catalog
             modelBuilder.Entity<Manufacturer>()
                 .Property(m => m.Name)
                 .HasColumnType("NVARCHAR(50)");
+            modelBuilder.Entity<Manufacturer>()
+                .HasIndex(m => m.Name)
+                .IsUnique();
             modelBuilder.Entity<Manufacturer>()
                 .Property(m => m.Country)
                 .HasColumnType("NVARCHAR(50)");
@@ -54,13 +63,16 @@ namespace PortalAsp.EfCore.Catalog
             modelBuilder.Entity<ProductCategory>()
                 .Property(pc => pc.Name)
                 .HasColumnType("NVARCHAR(50)");
+            modelBuilder.Entity<ProductCategory>()
+                .HasIndex(pc => pc.Name)
+                .IsUnique();
         }
 
         public static void DefineImage(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Image>()
-                .Property(m => m.ImageBytes)
-                .HasColumnType("varbinary(2097200)");
+                .Property(m => m.ImageAddress)
+                .IsRequired();
         }
     }
 }
