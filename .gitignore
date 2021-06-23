@@ -385,4 +385,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 .idea/
-*.sln.iml
+*.sln.iml/
+
+#Project files
+PortalAsp\wwwroot\uploads

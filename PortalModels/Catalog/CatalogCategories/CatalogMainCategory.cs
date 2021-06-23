@@ -1,4 +1,5 @@
-﻿using PortalModels.Catalog.Products;
+﻿using System.Collections.Generic;
+using PortalModels.Catalog.Products;
 
 namespace PortalModels.Catalog.CatalogCategories
 { 
@@ -6,7 +7,7 @@ namespace PortalModels.Catalog.CatalogCategories
     {
         public long CatalogMainCategoryId { get; set; }
         public string Name { get; set; }
-        public Image Image { get; set; }
-        public CatalogSubCategory[] SubCategories { get; set; }
+        public string ImageAddress { get; set; }
+        public List<CatalogSubCategory> SubCategories { get; set; }
     }
 }

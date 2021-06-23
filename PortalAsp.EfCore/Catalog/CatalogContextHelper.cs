@@ -70,8 +70,8 @@ namespace PortalAsp.EfCore.Catalog
 
         public static void DefineImage(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Image>()
-                .Property(m => m.ImageAddress)
+            modelBuilder.Entity<ProductImage>()
+                .Property(m => m.Address)
                 .IsRequired();
         }
     }
