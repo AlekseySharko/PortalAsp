@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ namespace PortalAsp
                 options.AddPolicy(name: "Angular",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200/").AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                        builder.WithOrigins("http://localhost:4200");
                     });
             });
             services.AddControllers().AddNewtonsoftJson();

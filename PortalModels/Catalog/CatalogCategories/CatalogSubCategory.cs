@@ -3,7 +3,7 @@ using PortalModels.Catalog.Products;
 
 namespace PortalModels.Catalog.CatalogCategories
 {
-    public class CatalogSubCategory
+    public class CatalogSubCategory : INameAware
     {
         public long CatalogSubCategoryId { get; set; }
         public string Name { get; set; }

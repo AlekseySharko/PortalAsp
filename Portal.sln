@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalAsp", "PortalAsp\PortalAsp.csproj", "{9C70A3DF-BCCA-4C4F-AAAD-62C338EEDCA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortalAsp", "PortalAsp\PortalAsp.csproj", "{9C70A3DF-BCCA-4C4F-AAAD-62C338EEDCA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalModels", "PortalModels\PortalModels.csproj", "{F2624AF8-992F-49A1-8C69-CF8944D83FFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortalModels", "PortalModels\PortalModels.csproj", "{F2624AF8-992F-49A1-8C69-CF8944D83FFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalAsp.EfCore", "PortalAsp.EfCore\PortalAsp.EfCore.csproj", "{D8E0CEC4-FA45-466C-8ADE-59479D1E65EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortalAsp.EfCore", "PortalAsp.EfCore\PortalAsp.EfCore.csproj", "{D8E0CEC4-FA45-466C-8ADE-59479D1E65EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalAsp.Tests", "PortalAsp.Tests\PortalAsp.Tests.csproj", "{AB771EC6-17D8-4BBE-A4AC-DC2DFD2DDDE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{D8E0CEC4-FA45-466C-8ADE-59479D1E65EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E0CEC4-FA45-466C-8ADE-59479D1E65EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E0CEC4-FA45-466C-8ADE-59479D1E65EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB771EC6-17D8-4BBE-A4AC-DC2DFD2DDDE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB771EC6-17D8-4BBE-A4AC-DC2DFD2DDDE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB771EC6-17D8-4BBE-A4AC-DC2DFD2DDDE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB771EC6-17D8-4BBE-A4AC-DC2DFD2DDDE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

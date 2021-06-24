@@ -20,12 +20,9 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok(requestedProducts);
         }
 
-
         public IActionResult AddProduct([FromBody] Product product)
         {
-            CatalogContext.Products.Add(product);
-            CatalogContext.SaveChanges();
-            return Ok();
+            return BadRequest();
         }
     }
 }

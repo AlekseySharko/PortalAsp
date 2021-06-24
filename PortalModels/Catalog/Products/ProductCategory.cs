@@ -2,7 +2,7 @@
 
 namespace PortalModels.Catalog.Products
 {
-    public class ProductCategory
+    public class ProductCategory : INameAware
     {
         public long ProductCategoryId { get; set; }
         public string Name { get; set; }

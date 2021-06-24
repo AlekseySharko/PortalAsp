@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using PortalAsp.Controllers.Helpers.Catalog;
 
 namespace PortalAsp.Controllers.Files
 {
@@ -43,7 +44,7 @@ namespace PortalAsp.Controllers.Files
             foreach (IFormFile file in files)
             {
                 string fileExtension = Path.GetExtension(file.FileName);
-                if(CheckFileExtension(fileExtension) == false) 
+                if(ImageAddressValidator.CheckExtension(fileExtension) == false) 
                 {
                     return BadRequest($"{file.FileName} is not an image");
                 }
@@ -59,14 +60,6 @@ namespace PortalAsp.Controllers.Files
                 }
             }
             return Ok(resultUrls);
-        }
-
-        public bool CheckFileExtension(string extension)
-        {
-            string[] permittedExtensions = { ".bmp", ".jpg", ".jpeg", ".gif", ".png", ".svg" };
-            string res = Array.Find(permittedExtensions, el => el == extension.ToLower());
-            if (String.IsNullOrWhiteSpace(res)) return false;
-            return true;
         }
         public string RandomString(int length)
         {

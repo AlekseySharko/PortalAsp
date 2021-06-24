@@ -1,5 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using PortalAsp.Controllers.Helpers;
+using PortalAsp.Controllers.Helpers.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 
@@ -18,20 +19,17 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpPost]
-        public IActionResult AddCategory([FromBody]CatalogMainCategory category)
+        public IActionResult PostMainCategory([FromBody]CatalogMainCategory mainCategory)
         {
-            if (!CheckCategory(category)) return BadRequest("Invalid category");
-            CatalogContext.CatalogMainCategories.Add(category);
+            ValidationResult validationResult =
+                CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories);
+            if (validationResult.IsValid == false) return BadRequest(validationResult.Message);
+
+            CatalogContext.CatalogMainCategories.Add(mainCategory);
             CatalogContext.SaveChanges();
             return Ok();
         }
-
-        private bool CheckCategory(CatalogMainCategory category)
-        {
-            if (string.IsNullOrWhiteSpace(category.Name)) return false;
-            if (string.IsNullOrWhiteSpace(category.ImageAddress)) return false;
-            return true;
-        }
+        
 
     }
 }

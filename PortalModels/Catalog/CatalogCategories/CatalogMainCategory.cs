@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using PortalModels.Catalog.Products;
 
 namespace PortalModels.Catalog.CatalogCategories
 { 
-    public class CatalogMainCategory
+    public class CatalogMainCategory : INameAware
     {
         public long CatalogMainCategoryId { get; set; }
         public string Name { get; set; }

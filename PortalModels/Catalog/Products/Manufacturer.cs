@@ -1,6 +1,6 @@
 ﻿namespace PortalModels.Catalog.Products
 { 
-    public class Manufacturer
+    public class Manufacturer : INameAware
     {
         public long ManufacturerId { get; set; }
         public string Name { get; set; }
