@@ -42,7 +42,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
             if (existingCategories.Contains(productCategory, new CaseInsensitiveNameComparer<ProductCategory>()))
             {
                 result.IsValid = false;
-                result.Message += "Such manufacturer already exists. ";
+                result.Message += "Such product category already exists. ";
             }
 
             return result;

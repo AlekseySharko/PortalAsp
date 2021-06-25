@@ -19,17 +19,16 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpPost]
-        public IActionResult PostMainCategory([FromBody]CatalogMainCategory mainCategory)
+        public IActionResult PostMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
                 CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories);
-            if (validationResult.IsValid == false) return BadRequest(validationResult.Message);
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
 
             CatalogContext.CatalogMainCategories.Add(mainCategory);
             CatalogContext.SaveChanges();
             return Ok();
         }
-        
-
     }
 }

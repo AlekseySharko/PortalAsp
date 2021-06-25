@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.Products;
 using PortalAsp.EfCore.Catalog;
-using PortalModels;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 using Xunit;
@@ -49,6 +48,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         {
             public IEnumerator<object[]> GetEnumerator()
             {
+                //Control
                 yield return new object[]
                 {
                     new ProductCategory
@@ -59,6 +59,10 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "OkResult"
                 };
 
+                //Empty object
+                yield return new object[] { new ProductCategory(), 2, "BadRequestObjectResult" };
+
+                //Id
                 yield return new object[]
                 {
                     new ProductCategory
@@ -70,6 +74,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "BadRequestObjectResult"
                 };
 
+                //SubCategoryId
                 yield return new object[]
                 {
                     new ProductCategory
@@ -80,8 +85,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "BadRequestObjectResult"
                 };
 
-                yield return new object[] { new ProductCategory(), 2,  "BadRequestObjectResult" };
-
+                //Name
                 yield return new object[]
                 {
                     new ProductCategory
@@ -92,6 +96,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "BadRequestObjectResult"
                 };
 
+                //Name case insensitive exists
                 yield return new object[]
                 {
                     new ProductCategory
@@ -101,7 +106,6 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     2,
                     "BadRequestObjectResult"
                 };
-
                 yield return new object[]
                 {
                     new ProductCategory

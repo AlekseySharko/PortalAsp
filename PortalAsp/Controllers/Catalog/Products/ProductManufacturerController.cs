@@ -21,8 +21,10 @@ namespace PortalAsp.Controllers.Catalog.Products
         [HttpPost]
         public IActionResult PostManufacturer([FromBody] Manufacturer manufacturer)
         {
-            ValidationResult validationResult = ManufacturerValidator.ValidateOnAdd(manufacturer, CatalogContext.Manufacturers);
-            if (validationResult.IsValid == false) return BadRequest(validationResult.Message);
+            ValidationResult validationResult =
+                ManufacturerValidator.ValidateOnAdd(manufacturer, CatalogContext.Manufacturers);
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
 
             CatalogContext.Manufacturers.Add(manufacturer);
             CatalogContext.SaveChanges();

@@ -39,14 +39,17 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         {
             public IEnumerator<object[]> GetEnumerator()
             {
+                //Control
                 yield return new object[] { new Manufacturer
                 {
                     Name = "Name",
                     Country = "Country"
                 }, "OkResult" };
 
+                //Empty object
                 yield return new object[] { new Manufacturer(), "BadRequestObjectResult" };
 
+                //Id
                 yield return new object[] { new Manufacturer
                 {
                     Name = "Name",
@@ -54,28 +57,31 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     ManufacturerId = 123
                 }, "BadRequestObjectResult" };
 
+                //Name
                 yield return new object[] { new Manufacturer
                 {
                     Name = " ",
                     Country = "Country"
                 }, "BadRequestObjectResult" };
 
+                //Country
                 yield return new object[] { new Manufacturer
                 {
                     Name = "Name",
                     Country = " "
                 }, "BadRequestObjectResult" };
-
-                yield return new object[] { new Manufacturer
-                {
-                    Name = " ",
-                    Country = " "
-                }, "BadRequestObjectResult" };
+                
+                //Name case insensitive exists
                 yield return new object[] { new Manufacturer
                 {
                     Name = "Initial manufacturer",
                     Country = "Country"
                 }, "BadRequestObjectResult" };
+                yield return new object[] { new Manufacturer
+                {
+                    Name = "Initial anufacturer",
+                    Country = "Country"
+                }, "OkResult" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

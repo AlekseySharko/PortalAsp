@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PortalAsp.Controllers.Helpers;
+using PortalAsp.Controllers.Helpers.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.Products;
 
@@ -20,9 +23,20 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok(requestedProducts);
         }
 
-        public IActionResult AddProduct([FromBody] Product product)
+        public IActionResult PostProduct([FromBody] Product product, [FromQuery] long productCategoryId)
         {
-            return BadRequest();
+            ProductCategory productCategory = CatalogContext.ProductCategories
+                .Include(pc => pc.Products)
+                .FirstOrDefault(pc => pc.ProductCategoryId == productCategoryId);
+            if (productCategory is null)
+                return BadRequest("No such subcategory or no subcategory id is provided");
+
+            ValidationResult validationResult =
+                ProductValidator.ValidateOnAdd(product, CatalogContext.Products, CatalogContext.Manufacturers);
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            return Ok();
         }
     }
 }

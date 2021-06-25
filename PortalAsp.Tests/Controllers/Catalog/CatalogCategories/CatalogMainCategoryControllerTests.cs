@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.CatalogCategories;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
+using System.Collections;
+using System.Collections.Generic;
 using Xunit;
 
 namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
@@ -39,12 +39,17 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
         {
             public IEnumerator<object[]> GetEnumerator()
             {
+                //Control
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category",
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "OkResult" };
 
+                //Empty object
+                yield return new object[] { new CatalogMainCategory(), "BadRequestObjectResult" };
+
+                //Id
                 yield return new object[] { new CatalogMainCategory
                 {
                     CatalogMainCategoryId = 3,
@@ -52,61 +57,57 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "BadRequestObjectResult" };
 
+                //ImageAddress
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category",
                     ImageAddress = "http://httpf/sdaf"
                 }, "BadRequestObjectResult" };
-                yield return new object[] { new CatalogMainCategory(), "BadRequestObjectResult" };
-
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category",
                     ImageAddress = "  "
                 }, "BadRequestObjectResult" };
-
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category"
                 }, "BadRequestObjectResult" };
 
+                //Name
                 yield return new object[] { new CatalogMainCategory
                 {
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "BadRequestObjectResult" };
-
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "   ",
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "BadRequestObjectResult" };
 
+                //Name case insensitive exists
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Initial main category",
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "BadRequestObjectResult" };
-
+                yield return new object[] { new CatalogMainCategory
+                {
+                    Name = "Initial main category",
+                    ImageAddress = "http://http/fsdaf.png"
+                }, "BadRequestObjectResult" };
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Initial Cain Category",
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "OkResult" };
 
-                yield return new object[] { new CatalogMainCategory
-                {
-                    CatalogMainCategoryId = 3,
-                    Name = "Initial main category",
-                    ImageAddress = "http://http/fsdaf.png"
-                }, "BadRequestObjectResult" };
-
+                //SubCategories
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category",
                     ImageAddress = "http://http/fsdaf.png",
                     SubCategories = new List<CatalogSubCategory>()
                 }, "OkResult" };
-
                 yield return new object[] { new CatalogMainCategory
                 {
                     Name = "Test Category",

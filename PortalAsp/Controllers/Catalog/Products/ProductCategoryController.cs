@@ -23,17 +23,20 @@ namespace PortalAsp.Controllers.Catalog.Products
         }
 
         [HttpPost]
-        public IActionResult PostProductCategory([FromBody]ProductCategory productCategory, [FromQuery]int subCategoryId)
+        public IActionResult PostProductCategory([FromBody] ProductCategory productCategory,
+            [FromQuery] long subCategoryId)
         {
             CatalogSubCategory subCategory = CatalogContext.CatalogSubCategories
                 .Include(sc => sc.ProductCategories)
                 .FirstOrDefault(sc => sc.CatalogSubCategoryId == subCategoryId);
 
-            if (subCategory is null) return BadRequest("No such subcategory or no subcategory id is provided");
+            if (subCategory is null)
+                return BadRequest("No such subcategory or no subcategory id is provided");
 
             ValidationResult validationResult =
                 ProductCategoryValidator.ValidateOnAdd(productCategory, CatalogContext.ProductCategories);
-            if (validationResult.IsValid == false) return BadRequest(validationResult.Message);
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
 
             subCategory.ProductCategories ??= new List<ProductCategory>();
             subCategory.ProductCategories.Add(productCategory);
