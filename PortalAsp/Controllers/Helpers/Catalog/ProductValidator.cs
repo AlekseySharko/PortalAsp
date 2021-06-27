@@ -30,7 +30,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 return result;
             }
 
-            if (existingProducts.Contains(product, new CaseInsensitiveNameComparer<Product>()))
+            if (existingProducts.FirstOrDefault(p=> NameComparer.CaseInsensitive(p, product)) != null)
             {
                 result.IsValid = false;
                 result.Message += "There's a product with the same name. ";

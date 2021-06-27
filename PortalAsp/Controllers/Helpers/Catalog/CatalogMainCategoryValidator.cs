@@ -47,7 +47,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "Main category can't have any subcategories now. ";
             }
 
-            if (existingMainCategories.Contains(mainCategory, new CaseInsensitiveNameComparer<CatalogMainCategory>()))
+            if (existingMainCategories.FirstOrDefault(mc => NameComparer.CaseInsensitive(mc, mainCategory)) != null)
             {
                 result.IsValid = false;
                 result.Message += "Such main category already exists. ";

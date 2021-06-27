@@ -39,7 +39,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "Product category can't have any products now. ";
             }
 
-            if (existingCategories.Contains(productCategory, new CaseInsensitiveNameComparer<ProductCategory>()))
+            if (existingCategories.FirstOrDefault(pc => NameComparer.CaseInsensitive(pc, productCategory)) != null)
             {
                 result.IsValid = false;
                 result.Message += "Such product category already exists. ";

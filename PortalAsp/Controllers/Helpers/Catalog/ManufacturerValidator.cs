@@ -39,7 +39,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "ManufacturerId should be 0 or undefined. ";
             }
 
-            if (existingManufacturers.Contains(manufacturer, new CaseInsensitiveNameComparer<Manufacturer>()))
+            if (existingManufacturers.FirstOrDefault(m => NameComparer.CaseInsensitive(m, manufacturer)) != null)
             {
                 result.IsValid = false;
                 result.Message += "Such manufacturer already exists. ";
