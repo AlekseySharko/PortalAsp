@@ -46,7 +46,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "Subcategory's parent main category has to be undefined. ";
             }
 
-            if (existingCategories.FirstOrDefault(sc => NameComparer.CaseInsensitive(sc, subCategory)) != null)
+            if (existingCategories.FirstOrDefault(sc => sc.Name.ToLower() == subCategory.Name.ToLower()) != null)
             {
                 result.IsValid = false;
                 result.Message += "Such subcategory already exists. ";

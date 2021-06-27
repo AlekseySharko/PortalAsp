@@ -39,10 +39,27 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "ManufacturerId should be 0 or undefined. ";
             }
 
-            if (existingManufacturers.FirstOrDefault(m => NameComparer.CaseInsensitive(m, manufacturer)) != null)
+            if (existingManufacturers.FirstOrDefault(m => m.Name.ToLower() == manufacturer.Name.ToLower()) != null)
             {
                 result.IsValid = false;
                 result.Message += "Such manufacturer already exists. ";
+            }
+
+            return result;
+        }
+
+        public static ValidationResult ValidateOnDelete(long manufacturerId, IQueryable<Manufacturer> existingManufacturers)
+        {
+            ValidationResult result = new ValidationResult
+            {
+                IsValid = true,
+                Message = ""
+            };
+
+            if (existingManufacturers.FirstOrDefault(m => m.ManufacturerId == manufacturerId) == null)
+            {
+                result.IsValid = false;
+                result.Message = "Such manufacturer doesn't exist. ";
             }
 
             return result;

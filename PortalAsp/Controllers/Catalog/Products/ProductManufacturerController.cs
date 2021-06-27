@@ -30,5 +30,18 @@ namespace PortalAsp.Controllers.Catalog.Products
             CatalogContext.SaveChanges();
             return Ok();
         }
+
+        [HttpDelete]
+        public IActionResult DeleteManufacturer(long id)
+        {
+            ValidationResult validationResult =
+                ManufacturerValidator.ValidateOnDelete(id, CatalogContext.Manufacturers);
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.Products.Remove(new Product { ProductId = id });
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
     }
 }

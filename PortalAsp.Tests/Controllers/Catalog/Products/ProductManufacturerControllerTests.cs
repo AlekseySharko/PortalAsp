@@ -13,8 +13,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
     public class ProductManufacturerControllerTests
     {
         [Theory]
-        [ClassData(typeof(BadRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        [ClassData(typeof(BadAddRequestTestData))]
+        public void PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -35,7 +35,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             Assert.Equal(resultType, postResult.GetType().Name);
         }
 
-        public class BadRequestTestData : IEnumerable<object[]>
+        public class BadAddRequestTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -82,6 +82,42 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     Name = "Initial anufacturer",
                     Country = "Country"
                 }, "OkResult" };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(BadDeleteRequestTestData))]
+        public void PostManufacturer_DropsBadRequestOnInvalidManufacturer(long manufacturerId, string resultType)
+        {
+            //Arrange
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
+            {
+                ManufacturerId = 321,
+                Name = "Initial Manufacturer",
+                Country = "USA"
+            });
+            var mockObj = mock.Object;
+            mockObj.Manufacturers = dbSet;
+            ProductManufacturerController controller = new ProductManufacturerController(mockObj);
+
+            //Act
+            IActionResult postResult = controller.DeleteManufacturer(manufacturerId);
+
+            //Assert
+            Assert.Equal(resultType, postResult.GetType().Name);
+        }
+
+        public class BadDeleteRequestTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                //Control
+                yield return new object[] { 321 , "OkResult" };
+                yield return new object[] { 333, "BadRequestObjectResult" };
+                yield return new object[] { 111, "BadRequestObjectResult" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

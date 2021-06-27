@@ -30,7 +30,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 return result;
             }
 
-            if (existingProducts.FirstOrDefault(p=> NameComparer.CaseInsensitive(p, product)) != null)
+            if (existingProducts.FirstOrDefault(p=> p.Name.ToLower() == product.Name.ToLower()) != null)
             {
                 result.IsValid = false;
                 result.Message += "There's a product with the same name. ";
@@ -66,7 +66,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "A product must have at least one image";
             }
 
-            if (!existingManufacturers.Contains(product.Manufacturer, new ManufacturerIdComparer()))
+            if (existingManufacturers.FirstOrDefault(m => m.ManufacturerId == product.Manufacturer.ManufacturerId) == null)
             {
                 result.IsValid = false;
                 result.Message += "Such manufacturer doesn't exist";
@@ -79,20 +79,6 @@ namespace PortalAsp.Controllers.Helpers.Catalog
             }
 
             return result;
-        }
-    }
-
-    class ManufacturerIdComparer : IEqualityComparer<Manufacturer>
-    {
-        public bool Equals([AllowNull] Manufacturer x, [AllowNull] Manufacturer y)
-        {
-            if (x is null || y is null) return false;
-            return x.ManufacturerId == y.ManufacturerId;
-        }
-
-        public int GetHashCode([DisallowNull] Manufacturer obj)
-        {
-            return obj.ManufacturerId.ToString().GetHashCode();
         }
     }
 }
