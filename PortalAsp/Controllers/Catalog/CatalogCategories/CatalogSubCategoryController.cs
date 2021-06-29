@@ -43,5 +43,34 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             CatalogContext.SaveChanges();
             return Ok();
         }
+
+        [HttpPut]
+        public IActionResult PutSubcategory([FromBody] CatalogSubCategory subCategory)
+        {
+            ValidationResult validationResult =
+                CatalogSubCategoryValidator.ValidateOnEdit(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+            
+            CatalogContext.CatalogSubCategories.Update(subCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteSubcategory([FromRoute] long id)
+        {
+            CatalogSubCategory subCategory = new CatalogSubCategory {CatalogSubCategoryId = id};
+
+            ValidationResult validationResult =
+                CatalogSubCategoryValidator.ValidateOnDelete(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.CatalogSubCategories.Remove(subCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
     }
 }

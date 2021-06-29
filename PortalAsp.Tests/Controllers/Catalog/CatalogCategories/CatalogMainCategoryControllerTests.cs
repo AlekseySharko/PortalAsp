@@ -13,8 +13,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
     public class CatalogMainCategoryControllerTests
     {
         [Theory]
-        [ClassData(typeof(BadRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        [ClassData(typeof(BadPostRequestTestData))]
+        public void PostMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -35,7 +35,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             Assert.Equal(resultType, postResult.GetType().Name);
         }
 
-        public class BadRequestTestData : IEnumerable<object[]>
+        public class BadPostRequestTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -114,6 +114,130 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     ImageAddress = "http://http/fsdaf.png",
                     SubCategories = new List<CatalogSubCategory> {new CatalogSubCategory()}
                 }, "BadRequestObjectResult" };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(BadPutRequestTestData))]
+        public void PutMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        {
+            //Arrange
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 23445,
+                Name = "Main Category",
+                ImageAddress = "httpfsdaf.png"
+            }, new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 2,
+                Name = "Initial Main Category",
+                ImageAddress = "httpfsdaf.png"
+            });
+            var mockObj = mock.Object;
+            mockObj.CatalogMainCategories = dbSet;
+            CatalogMainCategoryController controller = new CatalogMainCategoryController(mockObj);
+
+            //Act
+            IActionResult postResult = controller.PutMainCategory(mainCategory);
+
+            //Assert
+            Assert.Equal(resultType, postResult.GetType().Name);
+        }
+
+        public class BadPutRequestTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                //Control
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category",
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "OkResult" };
+
+                //Empty object
+                yield return new object[] { new CatalogMainCategory(), "BadRequestObjectResult" };
+
+                //Id
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 2344,
+                    Name = "Test Category",
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "BadRequestObjectResult" };
+
+
+                //ImageAddress
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category",
+                    ImageAddress = "http://httpf/sdaf"
+                }, "BadRequestObjectResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category",
+                    ImageAddress = "  "
+                }, "BadRequestObjectResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category"
+                }, "BadRequestObjectResult" };
+
+                //Name
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "BadRequestObjectResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "   ",
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "BadRequestObjectResult" };
+
+                //SubCategories
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category",
+                    ImageAddress = "http://http/fsdaf.png",
+                    SubCategories = new List<CatalogSubCategory>()
+                }, "OkResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Test Category",
+                    ImageAddress = "http://http/fsdaf.png",
+                    SubCategories = new List<CatalogSubCategory> {new CatalogSubCategory()}
+                }, "BadRequestObjectResult" };
+
+                //Name case insensitive exists
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Initial main category",
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "BadRequestObjectResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 2,
+                    Name = "Initial main category",
+                    ImageAddress = "http://http/fsdaf.png"
+                }, "OkResult" };
+                yield return new object[] { new CatalogMainCategory
+                {
+                    CatalogMainCategoryId = 23445,
+                    Name = "Initial Cain Category",
+                    ImageAddress = "http://httpf/sdaf.png"
+                }, "OkResult" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

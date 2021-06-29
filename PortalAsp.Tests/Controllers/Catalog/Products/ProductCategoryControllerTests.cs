@@ -14,8 +14,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
     public class ProductCategoryControllerTests
     {
         [Theory]
-        [ClassData(typeof(BadRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
+        [ClassData(typeof(BadPostRequestTestData))]
+        public void PostProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -44,7 +44,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             Assert.Equal(resultType, postResult.GetType().Name);
         }
 
-        public class BadRequestTestData : IEnumerable<object[]>
+        public class BadPostRequestTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -113,6 +113,95 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                         Name = "Initial poduct category"
                     },
                     2,
+                    "OkResult"
+                };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(BadPutRequestTestData))]
+        public void PutProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, string resultType)
+        {
+            //Arrange
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            var mockObj = mock.Object;
+
+            DbSet<ProductCategory> productCategorySet = TestHelper.GetQueryableMockDbSet(new ProductCategory()
+            {
+                ProductCategoryId = 142351,
+                Name = "Initial Product Category"
+            });
+            mockObj.ProductCategories = productCategorySet;
+
+            ProductCategoryController controller = new ProductCategoryController(mockObj);
+
+            //Act
+            IActionResult postResult = controller.PutProductCategory(productCategory);
+
+            //Assert
+            Assert.Equal(resultType, postResult.GetType().Name);
+        }
+
+        public class BadPutRequestTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                //Control
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "Name"
+                    },
+                    "OkResult"
+                };
+
+                //Empty object
+                yield return new object[] { new ProductCategory(), "BadRequestObjectResult" };
+                
+                //Id
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142,
+                        Name = "Name"
+                    },
+                    "BadRequestObjectResult"
+                };
+
+
+                //Name
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "  "
+                    },
+                    "BadRequestObjectResult"
+                };
+
+                //Name case insensitive exists
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "Initial product category"
+                    },
+                    "OkResult"
+                };
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "Initial poduct category"
+                    },
                     "OkResult"
                 };
             }

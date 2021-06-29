@@ -19,7 +19,7 @@ namespace PortalAsp
                 options.AddPolicy(name: "Angular",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+                        builder.WithOrigins("http://localhost:4200").AllowAnyMethod();
                     });
             });
             services.AddControllers().AddNewtonsoftJson();

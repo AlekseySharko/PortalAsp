@@ -21,7 +21,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(
+        public void PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
             Product product, int productCategoryId, bool isOk, string errorMessage = "")
         {
             //Arrange

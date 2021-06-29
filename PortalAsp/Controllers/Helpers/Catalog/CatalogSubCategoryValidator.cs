@@ -54,5 +54,75 @@ namespace PortalAsp.Controllers.Helpers.Catalog
 
             return result;
         }
+
+        public static ValidationResult ValidateOnEdit(CatalogSubCategory subCategory,
+            IQueryable<CatalogSubCategory> existingCategories)
+        {
+            ValidationResult result = new ValidationResult
+            {
+                IsValid = true,
+                Message = ""
+            };
+
+            if (subCategory is null)
+            {
+                result.IsValid = false;
+                result.Message += "Subcategory is null. ";
+                return result;
+            }
+
+            if (string.IsNullOrWhiteSpace(subCategory.Name))
+            {
+                result.IsValid = false;
+                result.Message += "Name is invalid. ";
+                return result;
+            }
+            
+            if (existingCategories.FirstOrDefault(sc => sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId) == null)
+            {
+                result.IsValid = false;
+                result.Message += "No such subcategory. ";
+            }
+
+            if (subCategory.ProductCategories != null && subCategory.ProductCategories.Count > 0)
+            {
+                result.IsValid = false;
+                result.Message += "Subcategory can't have any product categories now. ";
+            }
+
+            if (subCategory.ParentMainCategory == null)
+            {
+                result.IsValid = false;
+                result.Message += "Subcategory's parent main category can't be null on edit. ";
+            }
+
+            if (existingCategories.FirstOrDefault(sc =>
+                sc.Name.ToLower() == subCategory.Name.ToLower() &&
+                sc.CatalogSubCategoryId != subCategory.CatalogSubCategoryId) != null)
+            {
+                result.IsValid = false;
+                result.Message += "Such subcategory already exists. ";
+            }
+
+            return result;
+        }
+
+        public static ValidationResult ValidateOnDelete(CatalogSubCategory subCategory,
+            IQueryable<CatalogSubCategory> existingCategories)
+        {
+            ValidationResult result = new ValidationResult
+            {
+                IsValid = true,
+                Message = ""
+            };
+
+            if (existingCategories.FirstOrDefault(sc => sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId) == null)
+            {
+                result.IsValid = false;
+                result.Message += "No such subcategory. ";
+            }
+
+            return result;
+        }
     }
 }

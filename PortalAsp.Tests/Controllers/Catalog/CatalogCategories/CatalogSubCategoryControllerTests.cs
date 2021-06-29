@@ -14,8 +14,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
     public class CatalogSubCategoryControllerTests
     {
         [Theory]
-        [ClassData(typeof(BadRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
+        [ClassData(typeof(BadPostRequestTestData))]
+        public void PostSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -43,7 +43,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
         }
-        public class BadRequestTestData : IEnumerable<object[]>
+        public class BadPostRequestTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -160,6 +160,142 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     },
                     1,
                     "BadRequestObjectResult"
+                };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(BadPutRequestTestData))]
+        public void PutSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, string resultType)
+        {
+            //Arrange
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            var mockObj = mock.Object;
+
+            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory()
+            {
+                CatalogSubCategoryId = 32423414,
+                Name = "Initial Sub Category"
+            }, new CatalogSubCategory()
+            {
+                CatalogSubCategoryId = 1412,
+                Name = "Second Sub Category"
+            });
+            mockObj.CatalogSubCategories = subCategoriesSet;
+
+            CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
+
+            //Act
+            IActionResult postResult = controller.PutSubcategory(subCategory);
+
+            //Assert
+            Assert.Equal(resultType, postResult.GetType().Name);
+        }
+        public class BadPutRequestTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                //Control
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "OkResult"
+                };
+
+                //Empty object
+                yield return new object[]
+                {
+                    new CatalogSubCategory(),
+                    "BadRequestObjectResult"
+                };
+
+                //Id 
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 5321512,
+                        Name = "Name",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "BadRequestObjectResult"
+                };
+
+                //Name
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "  ",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "BadRequestObjectResult"
+                };
+
+                //Name case insensitive check
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Initial Sub Category",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "OkResult"
+                };
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Second Sub Category",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "BadRequestObjectResult"
+                };
+
+                //ProductCategories
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ProductCategories = new List<ProductCategory>(),
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "OkResult"
+                };
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ProductCategories = new List<ProductCategory>{new ProductCategory()},
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "BadRequestObjectResult"
+                };
+
+                //ParentMainCategory
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ParentMainCategory = new CatalogMainCategory()
+                    },
+                    "OkResult"
                 };
             }
 

@@ -13,7 +13,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
     public class ProductManufacturerControllerTests
     {
         [Theory]
-        [ClassData(typeof(BadAddRequestTestData))]
+        [ClassData(typeof(BadPostRequestTestData))]
         public void PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
@@ -35,7 +35,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             Assert.Equal(resultType, postResult.GetType().Name);
         }
 
-        public class BadAddRequestTestData : IEnumerable<object[]>
+        public class BadPostRequestTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -80,6 +80,99 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                 yield return new object[] { new Manufacturer
                 {
                     Name = "Initial anufacturer",
+                    Country = "Country"
+                }, "OkResult" };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(BadPutRequestTestData))]
+        public void PutManufacturer_DropsBadRequestOnPutInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        {
+            //Arrange
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
+            {
+                ManufacturerId = 5624,
+                Name = "Initial Manufacturer",
+                Country = "USA",
+            }, new Manufacturer
+            {
+                ManufacturerId = 123,
+                Name = "Second Initial Manufacturer",
+                Country = "USA",
+            });
+            var mockObj = mock.Object;
+            mockObj.Manufacturers = dbSet;
+            ProductManufacturerController controller = new ProductManufacturerController(mockObj);
+
+            //Act
+            IActionResult postResult = controller.PutManufacturer(manufacturer);
+
+            //Assert
+            Assert.Equal(resultType, postResult.GetType().Name);
+
+        }
+
+        public class BadPutRequestTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                //Control
+                yield return new object[] { new Manufacturer
+                {
+                    ManufacturerId = 5624,
+                    Name = "Name",
+                    Country = "Country"
+                }, "OkResult" };
+
+                //NoId
+                yield return new object[] { new Manufacturer
+                {
+                    Name = "Name",
+                    Country = "Country"
+                }, "BadRequestObjectResult" };
+
+                //Empty object
+                yield return new object[] { new Manufacturer(), "BadRequestObjectResult" };
+
+                //Id
+                yield return new object[] { new Manufacturer
+                {
+                    Name = "Name",
+                    Country = "Country",
+                    ManufacturerId = 5624,
+                }, "OkResult" };
+
+                //Name
+                yield return new object[] { new Manufacturer
+                {
+                    ManufacturerId = 5624,
+                    Name = " ",
+                    Country = "Country"
+                }, "BadRequestObjectResult" };
+
+                //Country
+                yield return new object[] { new Manufacturer
+                {
+                    ManufacturerId = 5624,
+                    Name = "Name",
+                    Country = " "
+                }, "BadRequestObjectResult" };
+
+                //Name case insensitive exists
+                yield return new object[] { new Manufacturer
+                {
+                    ManufacturerId = 5624,
+                    Name = "Second initial manufacturer",
+                    Country = "Country"
+                }, "BadRequestObjectResult" };
+                yield return new object[] { new Manufacturer
+                {
+                    ManufacturerId = 123,
+                    Name = "Second Initial Manufacturer",
                     Country = "Country"
                 }, "OkResult" };
             }

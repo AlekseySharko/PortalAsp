@@ -38,11 +38,40 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         public IActionResult PostMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
-                CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories);
+                CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
             CatalogContext.CatalogMainCategories.Add(mainCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult PutMainCategory([FromBody] CatalogMainCategory mainCategory)
+        {
+            ValidationResult validationResult =
+                CatalogMainCategoryValidator.ValidateOnEdit(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.CatalogMainCategories.Update(mainCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteMainCategory([FromRoute] long id)
+        {
+            CatalogMainCategory mainCategory = new CatalogMainCategory {CatalogMainCategoryId = id};
+
+            ValidationResult validationResult =
+                CatalogMainCategoryValidator.ValidateOnDelete(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.CatalogMainCategories.Remove(mainCategory);
             CatalogContext.SaveChanges();
             return Ok();
         }

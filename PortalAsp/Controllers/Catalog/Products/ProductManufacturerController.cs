@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Helpers;
 using PortalAsp.Controllers.Helpers.Catalog;
 using PortalAsp.EfCore.Catalog;
@@ -15,7 +17,7 @@ namespace PortalAsp.Controllers.Catalog.Products
         [HttpGet]
         public IActionResult GetManufacturers()
         {
-            return Ok(CatalogContext.Manufacturers);
+            return Ok(CatalogContext.Manufacturers.OrderBy(m => m.Name));
         }
 
         [HttpPost]
@@ -31,15 +33,29 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok();
         }
 
-        [HttpDelete]
-        public IActionResult DeleteManufacturer(long id)
+        [HttpPut]
+        public IActionResult PutManufacturer([FromBody] Manufacturer manufacturer)
         {
             ValidationResult validationResult =
-                ManufacturerValidator.ValidateOnDelete(id, CatalogContext.Manufacturers);
+                ManufacturerValidator.ValidateOnEdit(manufacturer, CatalogContext.Manufacturers.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.Products.Remove(new Product { ProductId = id });
+            CatalogContext.Manufacturers.Update(manufacturer);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteManufacturer([FromRoute]long id)
+        {
+            ValidationResult validationResult =
+                ManufacturerValidator.ValidateOnDelete(id, CatalogContext.Manufacturers.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.Manufacturers.Remove(new Manufacturer { ManufacturerId = id });
             CatalogContext.SaveChanges();
             return Ok();
         }

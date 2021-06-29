@@ -43,5 +43,34 @@ namespace PortalAsp.Controllers.Catalog.Products
             CatalogContext.SaveChanges();
             return Ok();
         }
+
+        [HttpPost]
+        public IActionResult PutProductCategory([FromBody] ProductCategory productCategory)
+        {
+            ValidationResult validationResult =
+                ProductCategoryValidator.ValidateOnEdit(productCategory, CatalogContext.ProductCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+            
+            CatalogContext.ProductCategories.Update(productCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteProductCategory([FromQuery] long id)
+        {
+            ProductCategory productCategory = new ProductCategory {ProductCategoryId = id};
+
+            ValidationResult validationResult =
+                ProductCategoryValidator.ValidateOnDelete(productCategory, CatalogContext.ProductCategories.AsNoTracking());
+            if (validationResult.IsValid == false)
+                return BadRequest(validationResult.Message);
+
+            CatalogContext.ProductCategories.Remove(productCategory);
+            CatalogContext.SaveChanges();
+            return Ok();
+        }
     }
 }
