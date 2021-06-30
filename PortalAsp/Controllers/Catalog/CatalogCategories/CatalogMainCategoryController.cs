@@ -19,15 +19,15 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         {
             if (includeSubcategories && includeProductCategories)
             {
-                var result = CatalogContext.CatalogMainCategories.
-                    Include(mc => mc.SubCategories)
+                var result = CatalogContext.CatalogMainCategories.Include(mc => mc.SubCategories)
                     .ThenInclude(sc => sc.ProductCategories);
                 BreakSubcategoryInfiniteReferenceCircle(result);
                 return Ok(result);
             }
             if (includeSubcategories)
             {
-                var result = CatalogContext.CatalogMainCategories.Include(mc => mc.SubCategories);
+                var result = CatalogContext.CatalogMainCategories
+                    .Include(mc => mc.SubCategories);
                 BreakSubcategoryInfiniteReferenceCircle(result);
                 return Ok(result);
             }

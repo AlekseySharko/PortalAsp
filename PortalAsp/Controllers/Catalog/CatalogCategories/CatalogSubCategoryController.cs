@@ -34,7 +34,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
                 return BadRequest("No such main category or no main category id is provided");
 
             ValidationResult validationResult =
-                CatalogSubCategoryValidator.ValidateOnAdd(subCategory, CatalogContext.CatalogSubCategories);
+                CatalogSubCategoryValidator.ValidateOnAdd(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
@@ -48,12 +48,13 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         public IActionResult PutSubcategory([FromBody] CatalogSubCategory subCategory)
         {
             ValidationResult validationResult =
-                CatalogSubCategoryValidator.ValidateOnEdit(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
+                CatalogSubCategoryValidator.ValidateOnEdit(subCategory,
+                    CatalogContext.CatalogSubCategories.AsNoTracking(),
+                    CatalogContext.CatalogMainCategories.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
-            
-            CatalogContext.CatalogSubCategories.Update(subCategory);
-            CatalogContext.SaveChanges();
+
+            EditSubcategory(subCategory);
             return Ok();
         }
 
@@ -71,6 +72,19 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             CatalogContext.CatalogSubCategories.Remove(subCategory);
             CatalogContext.SaveChanges();
             return Ok();
+        }
+
+        public void EditSubcategory(CatalogSubCategory subCategory)
+        { 
+            CatalogSubCategory existingCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
+                sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId);
+            if(existingCategory == null) return;
+
+            existingCategory.Name = subCategory.Name;
+            CatalogMainCategory newMainCategory = CatalogContext.CatalogMainCategories.FirstOrDefault(mc =>
+                mc.CatalogMainCategoryId == subCategory.ParentMainCategory.CatalogMainCategoryId);
+            existingCategory.ParentMainCategory = newMainCategory;
+            CatalogContext.SaveChanges();
         }
     }
 }

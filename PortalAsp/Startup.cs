@@ -19,11 +19,11 @@ namespace PortalAsp
                 options.AddPolicy(name: "Angular",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200").AllowAnyMethod();
+                        builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
                     });
             });
             services.AddControllers().AddNewtonsoftJson();
-            services.AddDbContext<CatalogContext>(opts =>
+            services.AddDbContextPool<CatalogContext>(opts =>
             {
                 opts.UseSqlServer(Configuration["ConnectionStrings:CatalogConnection"]);
             });

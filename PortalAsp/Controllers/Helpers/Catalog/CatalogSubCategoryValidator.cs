@@ -56,7 +56,7 @@ namespace PortalAsp.Controllers.Helpers.Catalog
         }
 
         public static ValidationResult ValidateOnEdit(CatalogSubCategory subCategory,
-            IQueryable<CatalogSubCategory> existingCategories)
+            IQueryable<CatalogSubCategory> existingCategories, IQueryable<CatalogMainCategory> existingMainCategories)
         {
             ValidationResult result = new ValidationResult
             {
@@ -90,10 +90,11 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "Subcategory can't have any product categories now. ";
             }
 
-            if (subCategory.ParentMainCategory == null)
+            if (subCategory.ParentMainCategory == null || existingMainCategories.FirstOrDefault(mc =>
+                mc.CatalogMainCategoryId == subCategory.ParentMainCategory.CatalogMainCategoryId) == null)
             {
                 result.IsValid = false;
-                result.Message += "Subcategory's parent main category can't be null on edit. ";
+                result.Message += "Subcategory's parent main category is null or doesn't exist. ";
             }
 
             if (existingCategories.FirstOrDefault(sc =>

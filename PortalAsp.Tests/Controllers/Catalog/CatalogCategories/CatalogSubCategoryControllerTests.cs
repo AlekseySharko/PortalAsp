@@ -21,14 +21,14 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
             var mockObj = mock.Object;
 
-            DbSet<CatalogMainCategory> mainCategorySet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory()
+            DbSet<CatalogMainCategory> mainCategorySet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
             {
                 CatalogMainCategoryId = 1,
                 Name = "Initial Main Category"
             });
             mockObj.CatalogMainCategories = mainCategorySet;
 
-            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory()
+            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory
             {
                 CatalogSubCategoryId = 2,
                 Name = "Initial Sub Category"
@@ -184,6 +184,13 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                 Name = "Second Sub Category"
             });
             mockObj.CatalogSubCategories = subCategoriesSet;
+            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 2134,
+                Name = "Initial Main Category",
+                ImageAddress = "httpfsdaf.png"
+            });
+            mockObj.CatalogMainCategories = dbSet;
 
             CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
 
@@ -204,7 +211,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 32423414,
                         Name = "Name",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "OkResult"
                 };
@@ -223,7 +230,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 5321512,
                         Name = "Name",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "BadRequestObjectResult"
                 };
@@ -235,7 +242,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 32423414,
                         Name = "  ",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "BadRequestObjectResult"
                 };
@@ -247,7 +254,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 32423414,
                         Name = "Initial Sub Category",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "OkResult"
                 };
@@ -257,7 +264,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 32423414,
                         Name = "Second Sub Category",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "BadRequestObjectResult"
                 };
@@ -270,7 +277,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         CatalogSubCategoryId = 32423414,
                         Name = "Name",
                         ProductCategories = new List<ProductCategory>(),
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "OkResult"
                 };
@@ -281,7 +288,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         CatalogSubCategoryId = 32423414,
                         Name = "Name",
                         ProductCategories = new List<ProductCategory>{new ProductCategory()},
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "BadRequestObjectResult"
                 };
@@ -293,9 +300,29 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         CatalogSubCategoryId = 32423414,
                         Name = "Name",
-                        ParentMainCategory = new CatalogMainCategory()
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 2134}
                     },
                     "OkResult"
+                };
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ParentMainCategory = null
+                    },
+                    "BadRequestObjectResult"
+                };
+                yield return new object[]
+                {
+                    new CatalogSubCategory
+                    {
+                        CatalogSubCategoryId = 32423414,
+                        Name = "Name",
+                        ParentMainCategory = new CatalogMainCategory {CatalogMainCategoryId = 111}
+                    },
+                    "BadRequestObjectResult"
                 };
             }
 
