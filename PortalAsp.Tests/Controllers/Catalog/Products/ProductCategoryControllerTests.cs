@@ -74,6 +74,18 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "BadRequestObjectResult"
                 };
 
+                //ParentSubCategory
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        Name = "Name",
+                        ParentSubCategory = new CatalogSubCategory()
+                    },
+                    2,
+                    "BadRequestObjectResult"
+                };
+
                 //SubCategoryId
                 yield return new object[]
                 {
@@ -135,6 +147,13 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             });
             mockObj.ProductCategories = productCategorySet;
 
+            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory
+            {
+                CatalogSubCategoryId = 2,
+                Name = "Initial Sub Category"
+            });
+            mockObj.CatalogSubCategories = subCategoriesSet;
+
             ProductCategoryController controller = new ProductCategoryController(mockObj);
 
             //Act
@@ -154,7 +173,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new ProductCategory
                     {
                         ProductCategoryId = 142351,
-                        Name = "Name"
+                        Name = "Name",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 2}
                     },
                     "OkResult"
                 };
@@ -168,11 +188,32 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new ProductCategory
                     {
                         ProductCategoryId = 142,
-                        Name = "Name"
+                        Name = "Name",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 2}
                     },
                     "BadRequestObjectResult"
                 };
 
+                //ParentCategory
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "Name",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 124}
+                    },
+                    "BadRequestObjectResult"
+                };
+                yield return new object[]
+                {
+                    new ProductCategory
+                    {
+                        ProductCategoryId = 142351,
+                        Name = "Name"
+                    },
+                    "BadRequestObjectResult"
+                };
 
                 //Name
                 yield return new object[]
@@ -180,7 +221,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new ProductCategory
                     {
                         ProductCategoryId = 142351,
-                        Name = "  "
+                        Name = "  ",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 2}
                     },
                     "BadRequestObjectResult"
                 };
@@ -191,7 +233,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new ProductCategory
                     {
                         ProductCategoryId = 142351,
-                        Name = "Initial product category"
+                        Name = "Initial product category",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 2}
                     },
                     "OkResult"
                 };
@@ -200,7 +243,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new ProductCategory
                     {
                         ProductCategoryId = 142351,
-                        Name = "Initial poduct category"
+                        Name = "Initial poduct category",
+                        ParentSubCategory = new CatalogSubCategory{CatalogSubCategoryId = 2}
                     },
                     "OkResult"
                 };

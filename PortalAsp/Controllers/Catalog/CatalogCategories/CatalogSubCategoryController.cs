@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -78,12 +79,12 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         { 
             CatalogSubCategory existingCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
                 sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId);
-            if(existingCategory == null) return;
+            if(existingCategory == null) throw new Exception("No such subcategory");
 
             existingCategory.Name = subCategory.Name;
-            CatalogMainCategory newMainCategory = CatalogContext.CatalogMainCategories.FirstOrDefault(mc =>
+            CatalogMainCategory parentMainCategory = CatalogContext.CatalogMainCategories.FirstOrDefault(mc =>
                 mc.CatalogMainCategoryId == subCategory.ParentMainCategory.CatalogMainCategoryId);
-            existingCategory.ParentMainCategory = newMainCategory;
+            existingCategory.ParentMainCategory = parentMainCategory;
             CatalogContext.SaveChanges();
         }
     }

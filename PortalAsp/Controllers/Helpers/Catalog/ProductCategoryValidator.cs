@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 
 namespace PortalAsp.Controllers.Helpers.Catalog
@@ -39,6 +40,12 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 result.Message += "Product category can't have any products now. ";
             }
 
+            if (productCategory.ParentSubCategory != null)
+            {
+                result.IsValid = false;
+                result.Message += "Parent sub category must be null on creation. ";
+            } 
+
             if (existingCategories.FirstOrDefault(pc => pc.Name.ToLower() == productCategory.Name.ToLower()) != null)
             {
                 result.IsValid = false;
@@ -48,7 +55,8 @@ namespace PortalAsp.Controllers.Helpers.Catalog
             return result;
         }
 
-        public static ValidationResult ValidateOnEdit(ProductCategory productCategory, IQueryable<ProductCategory> existingCategories)
+        public static ValidationResult ValidateOnEdit(ProductCategory productCategory,
+            IQueryable<ProductCategory> existingCategories, IQueryable<CatalogSubCategory> existingSubCategories)
         {
             ValidationResult result = new ValidationResult
             {
@@ -70,7 +78,8 @@ namespace PortalAsp.Controllers.Helpers.Catalog
                 return result;
             }
 
-            if (existingCategories.FirstOrDefault(pc => pc.ProductCategoryId == productCategory.ProductCategoryId) == null)
+            if (existingCategories.FirstOrDefault(pc => pc.ProductCategoryId == productCategory.ProductCategoryId) ==
+                null)
             {
                 result.IsValid = false;
                 result.Message += "Such product category doesn't exist. ";
@@ -80,6 +89,13 @@ namespace PortalAsp.Controllers.Helpers.Catalog
             {
                 result.IsValid = false;
                 result.Message += "Product category can't have any products now. ";
+            }
+
+            if (productCategory.ParentSubCategory == null || existingSubCategories.FirstOrDefault(sc =>
+                sc.CatalogSubCategoryId == productCategory.ParentSubCategory.CatalogSubCategoryId) == null)
+            {
+                result.IsValid = false;
+                result.Message += "Parent sub category null or doesn't exist. ";
             }
 
             if (existingCategories.FirstOrDefault(pc =>

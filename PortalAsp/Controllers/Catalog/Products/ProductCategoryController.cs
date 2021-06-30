@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,22 +45,23 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPut]
         public IActionResult PutProductCategory([FromBody] ProductCategory productCategory)
         {
             ValidationResult validationResult =
-                ProductCategoryValidator.ValidateOnEdit(productCategory, CatalogContext.ProductCategories.AsNoTracking());
+                ProductCategoryValidator.ValidateOnEdit(productCategory,
+                    CatalogContext.ProductCategories.AsNoTracking(),
+                    CatalogContext.CatalogSubCategories.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
-            
-            CatalogContext.ProductCategories.Update(productCategory);
-            CatalogContext.SaveChanges();
+
+            EditProductCategory(productCategory);
             return Ok();
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteProductCategory([FromQuery] long id)
+        public IActionResult DeleteProductCategory([FromRoute] long id)
         {
             ProductCategory productCategory = new ProductCategory {ProductCategoryId = id};
 
@@ -71,6 +73,19 @@ namespace PortalAsp.Controllers.Catalog.Products
             CatalogContext.ProductCategories.Remove(productCategory);
             CatalogContext.SaveChanges();
             return Ok();
+        }
+
+        public void EditProductCategory(ProductCategory productCategory)
+        {
+            ProductCategory existingProductCategory = CatalogContext.ProductCategories.FirstOrDefault(pc =>
+                pc.ProductCategoryId == productCategory.ProductCategoryId);
+            if (existingProductCategory == null) throw new Exception("No such product category");
+
+            existingProductCategory.Name = productCategory.Name;
+            CatalogSubCategory parentSubCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
+                sc.CatalogSubCategoryId == productCategory.ParentSubCategory.CatalogSubCategoryId);
+            existingProductCategory.ParentSubCategory = parentSubCategory;
+            CatalogContext.SaveChanges();
         }
     }
 }

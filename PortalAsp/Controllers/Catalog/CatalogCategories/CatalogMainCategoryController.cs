@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Helpers;
 using PortalAsp.Controllers.Helpers.Catalog;
+using PortalAsp.Controllers.Helpers.Catalog.CircularReferenceBreakers;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 
@@ -19,16 +19,17 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         {
             if (includeSubcategories && includeProductCategories)
             {
-                var result = CatalogContext.CatalogMainCategories.Include(mc => mc.SubCategories)
+                var result = CatalogContext.CatalogMainCategories
+                    .Include(mc => mc.SubCategories)
                     .ThenInclude(sc => sc.ProductCategories);
-                BreakSubcategoryInfiniteReferenceCircle(result);
+                CatalogRefBreaker.BreakSubcategoryInfiniteReferenceCircle(result, true);
                 return Ok(result);
             }
             if (includeSubcategories)
             {
                 var result = CatalogContext.CatalogMainCategories
                     .Include(mc => mc.SubCategories);
-                BreakSubcategoryInfiniteReferenceCircle(result);
+                CatalogRefBreaker.BreakSubcategoryInfiniteReferenceCircle(result);
                 return Ok(result);
             }
             return Ok(CatalogContext.CatalogMainCategories);
@@ -74,17 +75,6 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             CatalogContext.CatalogMainCategories.Remove(mainCategory);
             CatalogContext.SaveChanges();
             return Ok();
-        }
-
-        private void BreakSubcategoryInfiniteReferenceCircle(IEnumerable<CatalogMainCategory> mainCategories)
-        {
-            foreach (CatalogMainCategory catalogMainCategory in mainCategories)
-            {
-                foreach (var catalogSubCategory in catalogMainCategory.SubCategories)
-                {
-                    catalogSubCategory.ParentMainCategory = null;
-                }
-            }
         }
     }
 }
