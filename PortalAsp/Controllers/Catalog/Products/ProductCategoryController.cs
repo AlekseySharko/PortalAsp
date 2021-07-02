@@ -75,7 +75,7 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok();
         }
 
-        public void EditProductCategory(ProductCategory productCategory)
+        private void EditProductCategory(ProductCategory productCategory)
         {
             ProductCategory existingProductCategory = CatalogContext.ProductCategories.FirstOrDefault(pc =>
                 pc.ProductCategoryId == productCategory.ProductCategoryId);

@@ -75,7 +75,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             return Ok();
         }
 
-        public void EditSubcategory(CatalogSubCategory subCategory)
+        private void EditSubcategory(CatalogSubCategory subCategory)
         { 
             CatalogSubCategory existingCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
                 sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId);
