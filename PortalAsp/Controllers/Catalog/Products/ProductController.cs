@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Helpers;
-using PortalAsp.Controllers.Helpers.Catalog;
+using PortalAsp.Controllers.Validators;
+using PortalAsp.Controllers.Validators.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.Products;
 
 namespace PortalAsp.Controllers.Catalog.Products
 {
     [Route("api/catalog/products")]
-    public class CatalogProductController : Controller
+    public class ProductController : Controller
     {
         public CatalogContext CatalogContext { get; set; }
-        public CatalogProductController(CatalogContext catalogContext) => CatalogContext = catalogContext;
+        public ProductController(CatalogContext catalogContext) => CatalogContext = catalogContext;
 
         [HttpGet]
         public IActionResult GetProducts(long productCategoryId)
@@ -34,7 +34,7 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest("No such product category or no product category id is provided");
 
             ValidationResult validationResult =
-                ProductValidator.ValidateOnAdd(product, CatalogContext.Products.AsNoTracking(), CatalogContext.Manufacturers.AsNoTracking());
+                ProductValidator.ValidateOnAdd(product, CatalogContext.Products, CatalogContext.Manufacturers);
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 

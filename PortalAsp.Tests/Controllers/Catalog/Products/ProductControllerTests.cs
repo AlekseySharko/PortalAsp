@@ -10,7 +10,7 @@ using Xunit;
 
 namespace PortalAsp.Tests.Controllers.Catalog.Products
 {
-    public class CatalogProductControllerTests
+    public class ProductControllerTests
     {
         private static readonly Manufacturer TestManufacturer = new Manufacturer
         {
@@ -51,7 +51,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(TestManufacturer);
             mockObj.Manufacturers = dbSet;
 
-            CatalogProductController controller = new CatalogProductController(mockObj);
+            ProductController controller = new ProductController(mockObj);
 
             //Act
             IActionResult postResult = controller.PostProduct(product, productCategoryId);
@@ -102,7 +102,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     },
                     333,
                     false,
-                    "No such subcategory or no subcategory id is provided"
+                    "No such product category or no product category id is provided"
                 };
                 yield return new object[]
                 {
@@ -116,7 +116,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     },
                     0,
                     false,
-                    "No such subcategory or no subcategory id is provided"
+                    "No such product category or no product category id is provided"
                 };
 
                 //Null object

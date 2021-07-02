@@ -1,4 +1,4 @@
-﻿namespace PortalAsp.Controllers.Helpers
+﻿namespace PortalAsp.Controllers.Validators
 {
     public class ValidationResult
     {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Helpers;
-using PortalAsp.Controllers.Helpers.Catalog;
+using PortalAsp.Controllers.Validators;
+using PortalAsp.Controllers.Validators.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 
@@ -59,8 +59,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteSubcategory([FromRoute] long id)
         {
             CatalogSubCategory subCategory = new CatalogSubCategory {CatalogSubCategoryId = id};

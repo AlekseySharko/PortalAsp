@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using PortalModels.Catalog.CatalogCategories;
 
-namespace PortalAsp.Controllers.Helpers.Catalog
+namespace PortalAsp.Controllers.Validators.Catalog
 {
     public class CatalogSubCategoryValidator
     {

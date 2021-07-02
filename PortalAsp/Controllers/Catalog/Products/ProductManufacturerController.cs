@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Helpers;
-using PortalAsp.Controllers.Helpers.Catalog;
+using PortalAsp.Controllers.Validators;
+using PortalAsp.Controllers.Validators.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.Products;
 
@@ -46,8 +46,7 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteManufacturer([FromRoute]long id)
         {
             ValidationResult validationResult =

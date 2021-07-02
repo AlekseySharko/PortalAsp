@@ -2,7 +2,7 @@
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 
-namespace PortalAsp.Controllers.Helpers.Catalog
+namespace PortalAsp.Controllers.Validators.Catalog
 {
     public static class ProductCategoryValidator
     {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Helpers;
-using PortalAsp.Controllers.Helpers.Catalog;
+using PortalAsp.Controllers.Validators;
+using PortalAsp.Controllers.Validators.Catalog;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
@@ -59,8 +59,7 @@ namespace PortalAsp.Controllers.Catalog.Products
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteProductCategory([FromRoute] long id)
         {
             ProductCategory productCategory = new ProductCategory {ProductCategoryId = id};

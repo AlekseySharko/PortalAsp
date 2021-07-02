@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Helpers;
-using PortalAsp.Controllers.Helpers.Catalog;
-using PortalAsp.Controllers.Helpers.Catalog.CircularReferenceBreakers;
+using PortalAsp.Controllers.Validators;
+using PortalAsp.Controllers.Validators.Catalog;
+using PortalAsp.Controllers.Validators.Catalog.CircularReferenceBreakers;
 using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 
@@ -61,8 +61,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteMainCategory([FromRoute] long id)
         {
             CatalogMainCategory mainCategory = new CatalogMainCategory {CatalogMainCategoryId = id};
