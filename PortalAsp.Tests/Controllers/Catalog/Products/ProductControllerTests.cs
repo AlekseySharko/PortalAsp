@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -18,10 +19,10 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             Name = "Initial Manufacturer",
             Country = "USA"
         };
-
+        //TODO - edit validation tests
         [Theory]
         [ClassData(typeof(BadRequestTestData))]
-        public void PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
+        public async Task PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
             Product product, int productCategoryId, bool isOk, string errorMessage = "")
         {
             //Arrange
@@ -54,7 +55,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductController controller = new ProductController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PostProduct(product, productCategoryId);
+            IActionResult postResult = await controller.PostProduct(product, productCategoryId);
             OkResult okResult = postResult as OkResult;
             BadRequestObjectResult badRequestResult = postResult as BadRequestObjectResult;
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -15,7 +16,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
     {
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public void PostSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
+        public async Task PostSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -38,7 +39,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PostSubcategory(subCategory, mainCategoryId);
+            IActionResult postResult = await controller.PostSubcategory(subCategory, mainCategoryId);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
@@ -168,7 +169,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public void PutSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, string resultType)
+        public async Task PutSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -195,7 +196,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PutSubcategory(subCategory);
+            IActionResult postResult = await controller.PutSubcategory(subCategory);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);

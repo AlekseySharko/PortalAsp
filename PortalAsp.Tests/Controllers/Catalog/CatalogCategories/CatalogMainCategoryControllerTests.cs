@@ -6,6 +6,7 @@ using PortalAsp.EfCore.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
@@ -14,7 +15,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
     {
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public void PostMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        public async Task PostMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -29,7 +30,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             CatalogMainCategoryController controller = new CatalogMainCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PostMainCategory(mainCategory);
+            IActionResult postResult = await controller.PostMainCategory(mainCategory);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
@@ -121,7 +122,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public void PutMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        public async Task PutMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -141,7 +142,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
             CatalogMainCategoryController controller = new CatalogMainCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PutMainCategory(mainCategory);
+            IActionResult postResult = await controller.PutMainCategory(mainCategory);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);

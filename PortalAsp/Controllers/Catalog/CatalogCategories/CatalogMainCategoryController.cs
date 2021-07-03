@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Validators;
 using PortalAsp.Controllers.Validators.Catalog;
@@ -36,20 +37,20 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpPost]
-        public IActionResult PostMainCategory([FromBody] CatalogMainCategory mainCategory)
+        public async Task<IActionResult> PostMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
                 CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.CatalogMainCategories.Add(mainCategory);
-            CatalogContext.SaveChanges();
+            await CatalogContext.CatalogMainCategories.AddAsync(mainCategory);
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult PutMainCategory([FromBody] CatalogMainCategory mainCategory)
+        public async Task<IActionResult> PutMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
                 CatalogMainCategoryValidator.ValidateOnEdit(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
@@ -57,12 +58,12 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
                 return BadRequest(validationResult.Message);
 
             CatalogContext.CatalogMainCategories.Update(mainCategory);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteMainCategory([FromRoute] long id)
+        public async Task<IActionResult> DeleteMainCategory([FromRoute] long id)
         {
             CatalogMainCategory mainCategory = new CatalogMainCategory {CatalogMainCategoryId = id};
 
@@ -72,7 +73,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
                 return BadRequest(validationResult.Message);
 
             CatalogContext.CatalogMainCategories.Remove(mainCategory);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
     }

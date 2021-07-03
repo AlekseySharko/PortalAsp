@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Validators;
@@ -24,12 +25,12 @@ namespace PortalAsp.Controllers.Catalog.Products
         }
 
         [HttpPost]
-        public IActionResult PostProductCategory([FromBody] ProductCategory productCategory,
+        public async Task<IActionResult> PostProductCategory([FromBody] ProductCategory productCategory,
             [FromQuery] long subCategoryId)
         {
-            CatalogSubCategory subCategory = CatalogContext.CatalogSubCategories
+            CatalogSubCategory subCategory = await CatalogContext.CatalogSubCategories
                 .Include(sc => sc.ProductCategories)
-                .FirstOrDefault(sc => sc.CatalogSubCategoryId == subCategoryId);
+                .FirstOrDefaultAsync(sc => sc.CatalogSubCategoryId == subCategoryId);
 
             if (subCategory is null)
                 return BadRequest("No such subcategory or no subcategory id is provided");
@@ -41,12 +42,12 @@ namespace PortalAsp.Controllers.Catalog.Products
 
             subCategory.ProductCategories ??= new List<ProductCategory>();
             subCategory.ProductCategories.Add(productCategory);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult PutProductCategory([FromBody] ProductCategory productCategory)
+        public async Task<IActionResult> PutProductCategory([FromBody] ProductCategory productCategory)
         {
             ValidationResult validationResult =
                 ProductCategoryValidator.ValidateOnEdit(productCategory,
@@ -55,12 +56,12 @@ namespace PortalAsp.Controllers.Catalog.Products
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            EditProductCategory(productCategory);
+            await EditProductCategory(productCategory);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProductCategory([FromRoute] long id)
+        public async Task<IActionResult> DeleteProductCategory([FromRoute] long id)
         {
             ProductCategory productCategory = new ProductCategory {ProductCategoryId = id};
 
@@ -70,11 +71,11 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest(validationResult.Message);
 
             CatalogContext.ProductCategories.Remove(productCategory);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
-        private void EditProductCategory(ProductCategory productCategory)
+        private async Task EditProductCategory(ProductCategory productCategory)
         {
             ProductCategory existingProductCategory = CatalogContext.ProductCategories.FirstOrDefault(pc =>
                 pc.ProductCategoryId == productCategory.ProductCategoryId);
@@ -84,7 +85,7 @@ namespace PortalAsp.Controllers.Catalog.Products
             CatalogSubCategory parentSubCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
                 sc.CatalogSubCategoryId == productCategory.ParentSubCategory.CatalogSubCategoryId);
             existingProductCategory.ParentSubCategory = parentSubCategory;
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
         }
     }
 }

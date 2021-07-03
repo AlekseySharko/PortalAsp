@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Validators;
@@ -21,7 +22,7 @@ namespace PortalAsp.Controllers.Catalog.Products
         }
 
         [HttpPost]
-        public IActionResult PostManufacturer([FromBody] Manufacturer manufacturer)
+        public async Task<IActionResult> PostManufacturer([FromBody] Manufacturer manufacturer)
         {
             ValidationResult validationResult =
                 ManufacturerValidator.ValidateOnAdd(manufacturer, CatalogContext.Manufacturers);
@@ -29,12 +30,12 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest(validationResult.Message);
 
             CatalogContext.Manufacturers.Add(manufacturer);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult PutManufacturer([FromBody] Manufacturer manufacturer)
+        public async Task<IActionResult> PutManufacturer([FromBody] Manufacturer manufacturer)
         {
             ValidationResult validationResult =
                 ManufacturerValidator.ValidateOnEdit(manufacturer, CatalogContext.Manufacturers.AsNoTracking());
@@ -42,12 +43,12 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest(validationResult.Message);
 
             CatalogContext.Manufacturers.Update(manufacturer);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteManufacturer([FromRoute]long id)
+        public async Task<IActionResult> DeleteManufacturer([FromRoute]long id)
         {
             ValidationResult validationResult =
                 ManufacturerValidator.ValidateOnDelete(id, CatalogContext.Manufacturers.AsNoTracking());
@@ -55,7 +56,7 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest(validationResult.Message);
 
             CatalogContext.Manufacturers.Remove(new Manufacturer { ManufacturerId = id });
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
     }

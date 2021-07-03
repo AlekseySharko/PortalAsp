@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -15,7 +16,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
     {
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public void PostProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
+        public async Task PostProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -38,7 +39,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductCategoryController controller = new ProductCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PostProductCategory(productCategory, subCategoryId);
+            IActionResult postResult = await controller.PostProductCategory(productCategory, subCategoryId);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
@@ -134,7 +135,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public void PutProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, string resultType)
+        public async Task PutProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -157,7 +158,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductCategoryController controller = new ProductCategoryController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PutProductCategory(productCategory);
+            IActionResult postResult = await controller.PutProductCategory(productCategory);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);

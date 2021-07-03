@@ -6,6 +6,7 @@ namespace PortalAsp.Controllers.Validators.Catalog
 {
     public class CatalogMainCategoryValidator
     {
+        //TODO - change validation to model validation
         public static ValidationResult ValidateOnAdd(CatalogMainCategory mainCategory, IQueryable<CatalogMainCategory> existingMainCategories)
         {
             ValidationResult result = new ValidationResult

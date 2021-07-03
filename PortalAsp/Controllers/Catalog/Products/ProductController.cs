@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAsp.Controllers.Validators;
@@ -25,11 +26,11 @@ namespace PortalAsp.Controllers.Catalog.Products
         }
 
         [HttpPost]
-        public IActionResult PostProduct([FromBody] Product product, [FromQuery] long productCategoryId)
+        public async Task<IActionResult> PostProduct([FromBody] Product product, [FromQuery] long productCategoryId)
         {
-            ProductCategory productCategory = CatalogContext.ProductCategories
+            ProductCategory productCategory = await CatalogContext.ProductCategories
                 .Include(pc => pc.Products)
-                .FirstOrDefault(pc => pc.ProductCategoryId == productCategoryId);
+                .FirstOrDefaultAsync(pc => pc.ProductCategoryId == productCategoryId);
             if (productCategory is null)
                 return BadRequest("No such product category or no product category id is provided");
 
@@ -40,12 +41,12 @@ namespace PortalAsp.Controllers.Catalog.Products
 
             productCategory.Products ??= new List<Product>();
             productCategory.Products.Add(product);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult PutProduct([FromBody] Product product)
+        public async Task<IActionResult> PutProduct([FromBody] Product product)
         {
             ValidationResult validationResult =
                 ProductValidator.ValidateOnEdit(product, CatalogContext.Products.AsNoTracking(),
@@ -53,13 +54,13 @@ namespace PortalAsp.Controllers.Catalog.Products
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            EditProduct(product);
+            await EditProduct(product);
             return Ok();
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteProduct([FromRoute] long id)
+        public async Task<IActionResult> DeleteProduct([FromRoute] long id)
         {
             Product productToDelete = new Product {ProductId = id};
             ValidationResult validationResult =
@@ -68,11 +69,11 @@ namespace PortalAsp.Controllers.Catalog.Products
                 return BadRequest(validationResult.Message);
 
             CatalogContext.Products.Remove(productToDelete);
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
             return Ok();
         }
 
-        private void EditProduct(Product product)
+        private async Task EditProduct(Product product)
         {
             Product existingProduct = CatalogContext.Products.FirstOrDefault(p => p.ProductId == product.ProductId);
             if (existingProduct == null) throw new Exception("No such product");
@@ -88,7 +89,7 @@ namespace PortalAsp.Controllers.Catalog.Products
                 CatalogContext.ProductCategories.FirstOrDefault(pc =>
                     pc.ProductCategoryId == product.Category.ProductCategoryId);
 
-            CatalogContext.SaveChanges();
+            await CatalogContext.SaveChangesAsync();
         }
     }
 }

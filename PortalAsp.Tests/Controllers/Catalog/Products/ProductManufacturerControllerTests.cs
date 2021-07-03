@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -14,7 +15,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
     {
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        public async Task PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -29,7 +30,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductManufacturerController controller = new ProductManufacturerController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PostManufacturer(manufacturer);
+            IActionResult postResult = await controller.PostManufacturer(manufacturer);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
@@ -89,7 +90,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public void PutManufacturer_DropsBadRequestOnPutInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        public async Task PutManufacturer_DropsBadRequestOnPutInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -109,7 +110,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductManufacturerController controller = new ProductManufacturerController(mockObj);
 
             //Act
-            IActionResult postResult = controller.PutManufacturer(manufacturer);
+            IActionResult postResult = await controller.PutManufacturer(manufacturer);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
@@ -182,7 +183,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadDeleteRequestTestData))]
-        public void PostManufacturer_DropsBadRequestOnInvalidManufacturer(long manufacturerId, string resultType)
+        public async Task PostManufacturer_DropsBadRequestOnInvalidManufacturer(long manufacturerId, string resultType)
         {
             //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
@@ -197,7 +198,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             ProductManufacturerController controller = new ProductManufacturerController(mockObj);
 
             //Act
-            IActionResult postResult = controller.DeleteManufacturer(manufacturerId);
+            IActionResult postResult = await controller.DeleteManufacturer(manufacturerId);
 
             //Assert
             Assert.Equal(resultType, postResult.GetType().Name);
