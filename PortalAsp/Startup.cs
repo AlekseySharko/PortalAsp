@@ -4,7 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PortalAsp.Configuration;
 using PortalAsp.EfCore.Catalog;
+using PortalAsp.Middleware;
 
 namespace PortalAsp
 {
@@ -14,6 +16,10 @@ namespace PortalAsp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<CatalogContext>(opts =>
+            {
+                opts.UseSqlServer(Configuration["ConnectionStrings:CatalogConnection"]);
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "Angular",
@@ -22,20 +28,18 @@ namespace PortalAsp
                         builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
                     });
             });
+            services.AddEfCatalogRepositories();
+            services.ConfigureIdentity(Configuration);
             services.AddControllers().AddNewtonsoftJson();
-            services.AddDbContextPool<CatalogContext>(opts =>
-            {
-                opts.UseSqlServer(Configuration["ConnectionStrings:CatalogConnection"]);
-            });
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<HttpsOnlyMiddleware>();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseStaticFiles();
             app.UseRouting();
 

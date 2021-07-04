@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.Products;
 using PortalAsp.EfCore.Catalog;
+using PortalAsp.EfCore.Catalog.Repositories;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 using Xunit;
@@ -14,29 +15,34 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 {
     public class ProductCategoryControllerTests
     {
-        [Theory]
-        [ClassData(typeof(BadPostRequestTestData))]
-        public async Task PostProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
+        private static ProductCategoryController GetController()
         {
-            //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
             var mockObj = mock.Object;
 
             DbSet<ProductCategory> productCategorySet = TestHelper.GetQueryableMockDbSet(new ProductCategory()
             {
-                ProductCategoryId = 1,
+                ProductCategoryId = 142351,
                 Name = "Initial Product Category"
             });
             mockObj.ProductCategories = productCategorySet;
 
-            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory()
+            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory
             {
                 CatalogSubCategoryId = 2,
                 Name = "Initial Sub Category"
             });
             mockObj.CatalogSubCategories = subCategoriesSet;
 
-            ProductCategoryController controller = new ProductCategoryController(mockObj);
+            return new ProductCategoryController(new EfProductCategoryRepository(mockObj), new EfSubCategoryRepository(mockObj));
+        }
+
+        [Theory]
+        [ClassData(typeof(BadPostRequestTestData))]
+        public async Task PostProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, int subCategoryId, string resultType)
+        {
+            //Arrange
+            ProductCategoryController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PostProductCategory(productCategory, subCategoryId);
@@ -68,7 +74,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                 {
                     new ProductCategory
                     {
-                        ProductCategoryId = 5,
+                        ProductCategoryId = 142351,
                         Name = "Name"
                     },
                     2,
@@ -138,24 +144,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         public async Task PutProductCategory_DropsBadRequestOnInvalidProductCategoryOrSubCategoryId(ProductCategory productCategory, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            var mockObj = mock.Object;
-
-            DbSet<ProductCategory> productCategorySet = TestHelper.GetQueryableMockDbSet(new ProductCategory()
-            {
-                ProductCategoryId = 142351,
-                Name = "Initial Product Category"
-            });
-            mockObj.ProductCategories = productCategorySet;
-
-            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory
-            {
-                CatalogSubCategoryId = 2,
-                Name = "Initial Sub Category"
-            });
-            mockObj.CatalogSubCategories = subCategoriesSet;
-
-            ProductCategoryController controller = new ProductCategoryController(mockObj);
+            ProductCategoryController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PutProductCategory(productCategory);

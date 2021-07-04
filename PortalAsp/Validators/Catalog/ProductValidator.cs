@@ -2,7 +2,7 @@
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 
-namespace PortalAsp.Controllers.Validators.Catalog
+namespace PortalAsp.Validators.Catalog
 {
     public class ProductValidator
     {
@@ -81,7 +81,7 @@ namespace PortalAsp.Controllers.Validators.Catalog
         }
 
         public static ValidationResult ValidateOnEdit(Product product, IQueryable<Product> existingProducts,
-            IQueryable<Manufacturer> existingManufacturers, IQueryable<CatalogSubCategory> existingSubCategories)
+            IQueryable<Manufacturer> existingManufacturers, IQueryable<ProductCategory> existingProductCategories)
         {
             ValidationResult result = new ValidationResult
             {
@@ -146,10 +146,10 @@ namespace PortalAsp.Controllers.Validators.Catalog
                 result.Message += "Such manufacturer doesn't exist";
             }
 
-            if (existingSubCategories.FirstOrDefault(sc => sc.CatalogSubCategoryId == product.Category.ProductCategoryId) == null)
+            if (existingProductCategories.FirstOrDefault(pc => pc.ProductCategoryId == product.Category.ProductCategoryId) == null)
             {
                 result.IsValid = false;
-                result.Message += "No such subcategory";
+                result.Message += "No such product category";
             }
 
             return result;

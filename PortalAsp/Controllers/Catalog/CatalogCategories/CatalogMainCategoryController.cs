@@ -1,51 +1,35 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Validators;
-using PortalAsp.Controllers.Validators.Catalog;
-using PortalAsp.Controllers.Validators.Catalog.CircularReferenceBreakers;
-using PortalAsp.EfCore.Catalog;
+using PortalAsp.Validators;
+using PortalAsp.Validators.Catalog;
 using PortalModels.Catalog.CatalogCategories;
+using PortalModels.Catalog.Repositories.CatalogCategories;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {
     [Route("api/catalog/main-categories")]
     public class CatalogMainCategoryController : Controller
     {
-        public CatalogContext CatalogContext { get; set; }
-        public CatalogMainCategoryController(CatalogContext catalogContext) => CatalogContext = catalogContext;
+        public IMainCategoryRepository MainCategoryRepository { get; set; }
+        public CatalogMainCategoryController(IMainCategoryRepository mainCategoryRepository) => MainCategoryRepository = mainCategoryRepository;
 
         [HttpGet]
-        public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false, bool includeProductCategories = false)
+        [AllowAnonymous]
+        public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false, [FromQuery] bool includeProductCategories = false)
         {
-            if (includeSubcategories && includeProductCategories)
-            {
-                var result = CatalogContext.CatalogMainCategories
-                    .Include(mc => mc.SubCategories)
-                    .ThenInclude(sc => sc.ProductCategories);
-                CatalogRefBreaker.BreakSubcategoryInfiniteReferenceCircle(result, true);
-                return Ok(result);
-            }
-            if (includeSubcategories)
-            {
-                var result = CatalogContext.CatalogMainCategories
-                    .Include(mc => mc.SubCategories);
-                CatalogRefBreaker.BreakSubcategoryInfiniteReferenceCircle(result);
-                return Ok(result);
-            }
-            return Ok(CatalogContext.CatalogMainCategories);
+            return Ok(MainCategoryRepository.GetAllCategories(includeSubcategories, includeProductCategories));
         }
 
         [HttpPost]
         public async Task<IActionResult> PostMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
-                CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
+                CatalogMainCategoryValidator.ValidateOnAdd(mainCategory, MainCategoryRepository.GetAllCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            await CatalogContext.CatalogMainCategories.AddAsync(mainCategory);
-            await CatalogContext.SaveChangesAsync();
+            await MainCategoryRepository.AddMainCategoryAsync(mainCategory);
             return Ok();
         }
 
@@ -53,12 +37,11 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         public async Task<IActionResult> PutMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
-                CatalogMainCategoryValidator.ValidateOnEdit(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
+                CatalogMainCategoryValidator.ValidateOnEdit(mainCategory, MainCategoryRepository.GetAllCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.CatalogMainCategories.Update(mainCategory);
-            await CatalogContext.SaveChangesAsync();
+            await MainCategoryRepository.UpdateMainCategoryAsync(mainCategory);
             return Ok();
         }
 
@@ -68,12 +51,11 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             CatalogMainCategory mainCategory = new CatalogMainCategory {CatalogMainCategoryId = id};
 
             ValidationResult validationResult =
-                CatalogMainCategoryValidator.ValidateOnDelete(mainCategory, CatalogContext.CatalogMainCategories.AsNoTracking());
+                CatalogMainCategoryValidator.ValidateOnDelete(mainCategory, MainCategoryRepository.GetAllCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.CatalogMainCategories.Remove(mainCategory);
-            await CatalogContext.SaveChangesAsync();
+            await MainCategoryRepository.DeleteMainCategoryAsync(mainCategory);
             return Ok();
         }
     }

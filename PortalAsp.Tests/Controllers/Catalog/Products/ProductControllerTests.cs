@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.Products;
 using PortalAsp.EfCore.Catalog;
+using PortalAsp.EfCore.Catalog.Repositories;
 using PortalModels.Catalog.Products;
 using Xunit;
 
@@ -13,21 +14,18 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 {
     public class ProductControllerTests
     {
-        private static readonly Manufacturer TestManufacturer = new Manufacturer
+        private static ProductController GetController()
         {
-            ManufacturerId = 1,
-            Name = "Initial Manufacturer",
-            Country = "USA"
-        };
-        //TODO - edit validation tests
-        [Theory]
-        [ClassData(typeof(BadRequestTestData))]
-        public async Task PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
-            Product product, int productCategoryId, bool isOk, string errorMessage = "")
-        {
-            //Arrange
             Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
             var mockObj = mock.Object;
+
+            DbSet<Manufacturer> dbManufacturerSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
+            {
+                ManufacturerId = 1,
+                Name = "Initial Manufacturer",
+                Country = "USA"
+            });
+            mockObj.Manufacturers = dbManufacturerSet;
 
             DbSet<ProductCategory> productCategorySet = TestHelper.GetQueryableMockDbSet(new ProductCategory()
             {
@@ -49,10 +47,17 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             });
             mockObj.Products = productSet;
 
-            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(TestManufacturer);
-            mockObj.Manufacturers = dbSet;
+            return new ProductController(new EfProductRepository(mockObj), new EfManufacturerRepository(mockObj), new EfProductCategoryRepository(mockObj));
+        }
 
-            ProductController controller = new ProductController(mockObj);
+        //TODO - edit validation tests
+        [Theory]
+        [ClassData(typeof(BadRequestTestData))]
+        public async Task PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
+            Product product, int productCategoryId, bool isOk, string errorMessage = "")
+        {
+            //Arrange
+            ProductController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PostProduct(product, productCategoryId);
@@ -81,7 +86,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -96,7 +101,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -110,7 +115,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -136,7 +141,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     {
                         ProductId = 123,
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -152,7 +157,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "   ",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -166,7 +171,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Initial product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -180,7 +185,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Initial roduct",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -195,7 +200,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "   "
@@ -211,7 +216,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         Popularity = -2,
@@ -228,7 +233,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = new List<ProductImage>( ),
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -242,7 +247,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     new Product
                     {
                         Images = null,
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -302,7 +307,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     {
                         Category = new ProductCategory(),
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"
@@ -312,13 +317,13 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                     "Product category must be null"
                 };
 
-                //Delete it
+                //DeleteMainCategoryAsync it
                 yield return new object[]
                 {
                     new Product
                     {
                         Images = new List<ProductImage>{ new ProductImage() },
-                        Manufacturer = TestManufacturer,
+                        Manufacturer = new Manufacturer {ManufacturerId = 1},
                         Name = "Test product",
                         Price = 1.99M,
                         ShortDescription = "Test short description"

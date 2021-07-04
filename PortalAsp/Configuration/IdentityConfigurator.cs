@@ -1,0 +1,20 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using PortalAsp.EfCore.Identity;
+
+namespace PortalAsp.Configuration
+{
+    public static class IdentityConfigurator
+    {
+        public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<IdentityDataContext>(opts =>
+                opts.UseSqlServer(configuration[
+                    "ConnectionStrings:IdentityConnection"]));
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<IdentityDataContext>();
+        }
+    }
+}

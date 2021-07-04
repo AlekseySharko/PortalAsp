@@ -7,27 +7,38 @@ using PortalModels.Catalog.CatalogCategories;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using PortalAsp.EfCore.Catalog.Repositories;
 using Xunit;
 
 namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 {
     public class CatalogMainCategoryControllerTests
     {
+        private static CatalogMainCategoryController SetUpMock()
+        {
+            Mock<CatalogContext> mockContext = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 23445,
+                Name = "Main Category",
+                ImageAddress = "httpfsdaf.png"
+            }, new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 2,
+                Name = "Initial Main Category",
+                ImageAddress = "httpfsdaf.png"
+            });
+            var mockObj = mockContext.Object;
+            mockObj.CatalogMainCategories = dbSet;
+            CatalogMainCategoryController controller = new CatalogMainCategoryController(new EfMainCategoryRepository(mockObj));
+            return controller;
+        }
+
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
         public async Task PostMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
         {
-            //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
-            {
-                CatalogMainCategoryId = 1,
-                Name = "Initial Main Category",
-                ImageAddress = "httpfsdaf.png"
-            });
-            var mockObj = mock.Object;
-            mockObj.CatalogMainCategories = dbSet;
-            CatalogMainCategoryController controller = new CatalogMainCategoryController(mockObj);
+            CatalogMainCategoryController controller = SetUpMock();
 
             //Act
             IActionResult postResult = await controller.PostMainCategory(mainCategory);
@@ -53,7 +64,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                 //Id
                 yield return new object[] { new CatalogMainCategory
                 {
-                    CatalogMainCategoryId = 3,
+                    CatalogMainCategoryId = 3313,
                     Name = "Test Category",
                     ImageAddress = "http://httpf/sdaf.png"
                 }, "BadRequestObjectResult" };
@@ -125,21 +136,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
         public async Task PutMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
-            {
-                CatalogMainCategoryId = 23445,
-                Name = "Main Category",
-                ImageAddress = "httpfsdaf.png"
-            }, new CatalogMainCategory
-            {
-                CatalogMainCategoryId = 2,
-                Name = "Initial Main Category",
-                ImageAddress = "httpfsdaf.png"
-            });
-            var mockObj = mock.Object;
-            mockObj.CatalogMainCategories = dbSet;
-            CatalogMainCategoryController controller = new CatalogMainCategoryController(mockObj);
+            CatalogMainCategoryController controller = SetUpMock();
 
             //Act
             IActionResult postResult = await controller.PutMainCategory(mainCategory);

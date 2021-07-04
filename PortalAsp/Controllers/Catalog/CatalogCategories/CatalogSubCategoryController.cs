@@ -1,48 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Validators;
-using PortalAsp.Controllers.Validators.Catalog;
-using PortalAsp.EfCore.Catalog;
+using PortalAsp.Validators;
+using PortalAsp.Validators.Catalog;
+using PortalModels;
 using PortalModels.Catalog.CatalogCategories;
+using PortalModels.Catalog.Repositories.CatalogCategories;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {
     [Route("api/catalog/sub-categories")]
+    //[Authorize(Roles = "CatalogModerator")]
     public class CatalogSubCategoryController : Controller
     {
-        public CatalogContext CatalogContext { get; set; }
-        public CatalogSubCategoryController(CatalogContext catalogContext) => CatalogContext = catalogContext;
+        private ISubCategoryRepository SubCategoryRepository { get; }
+        private IMainCategoryRepository MainCategoryRepository { get; }
+
+        public CatalogSubCategoryController(ISubCategoryRepository subCategoryRepository, IMainCategoryRepository mainCategoryRepository)
+        {
+            SubCategoryRepository = subCategoryRepository;
+            MainCategoryRepository = mainCategoryRepository;
+        }
+        
 
         [HttpGet]
-        public IActionResult GetSubCategories(long mainCategoryId)
+        [AllowAnonymous]
+        public IActionResult GetSubCategories(long mainCategoryId, bool includeProductCategories = false)
         {
-            var result = CatalogContext.CatalogSubCategories
-                .Where(sc => sc.ParentMainCategory.CatalogMainCategoryId == mainCategoryId)
-                .Include(sc => sc.ProductCategories);
-            return Ok(result);
+            return Ok(SubCategoryRepository.GetSubCategoriesBy(mainCategoryId, includeProductCategories));
         }
 
         [HttpPost]
         public async Task<IActionResult> PostSubcategory([FromBody] CatalogSubCategory subCategory, [FromQuery] long mainCategoryId)
         {
-            CatalogMainCategory mainCategory = await CatalogContext.CatalogMainCategories
-                .Include(mc => mc.SubCategories)
-                .FirstOrDefaultAsync(mc => mc.CatalogMainCategoryId == mainCategoryId);
-            if (mainCategory is null)
-                return BadRequest("No such main category or no main category id is provided");
-
             ValidationResult validationResult =
-                CatalogSubCategoryValidator.ValidateOnAdd(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
+                CatalogSubCategoryValidator.ValidateOnAdd(subCategory, SubCategoryRepository.GetAllSubCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            mainCategory.SubCategories ??= new List<CatalogSubCategory>();
-            mainCategory.SubCategories.Add(subCategory);
-            await CatalogContext.SaveChangesAsync();
+            GeneralResult result = await SubCategoryRepository.AddSubcategoryAsync(subCategory, mainCategoryId);
+            if (!result.Success) 
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -51,12 +49,12 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         {
             ValidationResult validationResult =
                 CatalogSubCategoryValidator.ValidateOnEdit(subCategory,
-                    CatalogContext.CatalogSubCategories.AsNoTracking(),
-                    CatalogContext.CatalogMainCategories.AsNoTracking());
+                    SubCategoryRepository.GetAllSubCategories(),
+                    MainCategoryRepository.GetAllCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            await EditSubcategory(subCategory);
+            await SubCategoryRepository.UpdateSubcategoryAsync(subCategory);
             return Ok();
         }
 
@@ -66,26 +64,12 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             CatalogSubCategory subCategory = new CatalogSubCategory {CatalogSubCategoryId = id};
 
             ValidationResult validationResult =
-                CatalogSubCategoryValidator.ValidateOnDelete(subCategory, CatalogContext.CatalogSubCategories.AsNoTracking());
+                CatalogSubCategoryValidator.ValidateOnDelete(subCategory, SubCategoryRepository.GetAllSubCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.CatalogSubCategories.Remove(subCategory);
-            await CatalogContext.SaveChangesAsync();
+            await SubCategoryRepository.DeleteSubcategoryAsync(subCategory);
             return Ok();
-        }
-
-        private async Task EditSubcategory(CatalogSubCategory subCategory)
-        { 
-            CatalogSubCategory existingCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
-                sc.CatalogSubCategoryId == subCategory.CatalogSubCategoryId);
-            if(existingCategory == null) throw new Exception("No such subcategory");
-
-            existingCategory.Name = subCategory.Name;
-            CatalogMainCategory parentMainCategory = CatalogContext.CatalogMainCategories.FirstOrDefault(mc =>
-                mc.CatalogMainCategoryId == subCategory.ParentMainCategory.CatalogMainCategoryId);
-            existingCategory.ParentMainCategory = parentMainCategory;
-            await CatalogContext.SaveChangesAsync();
         }
     }
 }

@@ -1,48 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PortalAsp.Controllers.Validators;
-using PortalAsp.Controllers.Validators.Catalog;
-using PortalAsp.EfCore.Catalog;
-using PortalModels.Catalog.CatalogCategories;
+using PortalAsp.Validators;
+using PortalAsp.Validators.Catalog;
+using PortalModels;
 using PortalModels.Catalog.Products;
+using PortalModels.Catalog.Repositories.CatalogCategories;
+using PortalModels.Catalog.Repositories.Products;
 
 namespace PortalAsp.Controllers.Catalog.Products
 {
     [Route("api/catalog/product-categories")]
     public class ProductCategoryController : Controller
     {
-        public CatalogContext CatalogContext { get; set; }
-        public ProductCategoryController(CatalogContext catalogContext) => CatalogContext = catalogContext;
+        public IProductCategoryRepository ProductCategoryRepository { get; set; }
+        public ISubCategoryRepository SubCategoryRepository { get; set; }
+
+        public ProductCategoryController(IProductCategoryRepository productCategoryRepository,
+            ISubCategoryRepository subCategoryRepository)
+        {
+            ProductCategoryRepository = productCategoryRepository;
+            SubCategoryRepository = subCategoryRepository;
+        }
 
         [HttpGet]
         public IActionResult GetProductCategories()
         {
-            return Ok(CatalogContext.ProductCategories);
+            return Ok(ProductCategoryRepository.GetAllProductCategories());
         }
 
         [HttpPost]
         public async Task<IActionResult> PostProductCategory([FromBody] ProductCategory productCategory,
             [FromQuery] long subCategoryId)
         {
-            CatalogSubCategory subCategory = await CatalogContext.CatalogSubCategories
-                .Include(sc => sc.ProductCategories)
-                .FirstOrDefaultAsync(sc => sc.CatalogSubCategoryId == subCategoryId);
-
-            if (subCategory is null)
-                return BadRequest("No such subcategory or no subcategory id is provided");
-
             ValidationResult validationResult =
-                ProductCategoryValidator.ValidateOnAdd(productCategory, CatalogContext.ProductCategories);
+                ProductCategoryValidator.ValidateOnAdd(productCategory, ProductCategoryRepository.GetAllProductCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            subCategory.ProductCategories ??= new List<ProductCategory>();
-            subCategory.ProductCategories.Add(productCategory);
-            await CatalogContext.SaveChangesAsync();
+            GeneralResult result = await ProductCategoryRepository.AddProductCategoryAsync(productCategory, subCategoryId);
+            if (!result.Success) return BadRequest(result.Message);
             return Ok();
         }
 
@@ -51,12 +47,12 @@ namespace PortalAsp.Controllers.Catalog.Products
         {
             ValidationResult validationResult =
                 ProductCategoryValidator.ValidateOnEdit(productCategory,
-                    CatalogContext.ProductCategories.AsNoTracking(),
-                    CatalogContext.CatalogSubCategories.AsNoTracking());
+                    ProductCategoryRepository.GetAllProductCategories(),
+                    SubCategoryRepository.GetAllSubCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            await EditProductCategory(productCategory);
+            await ProductCategoryRepository.UpdateProductCategoryAsync(productCategory);
             return Ok();
         }
 
@@ -66,26 +62,12 @@ namespace PortalAsp.Controllers.Catalog.Products
             ProductCategory productCategory = new ProductCategory {ProductCategoryId = id};
 
             ValidationResult validationResult =
-                ProductCategoryValidator.ValidateOnDelete(productCategory, CatalogContext.ProductCategories.AsNoTracking());
+                ProductCategoryValidator.ValidateOnDelete(productCategory, ProductCategoryRepository.GetAllProductCategories());
             if (validationResult.IsValid == false)
                 return BadRequest(validationResult.Message);
 
-            CatalogContext.ProductCategories.Remove(productCategory);
-            await CatalogContext.SaveChangesAsync();
+            await ProductCategoryRepository.DeleteProductCategoryAsync(productCategory);
             return Ok();
-        }
-
-        private async Task EditProductCategory(ProductCategory productCategory)
-        {
-            ProductCategory existingProductCategory = CatalogContext.ProductCategories.FirstOrDefault(pc =>
-                pc.ProductCategoryId == productCategory.ProductCategoryId);
-            if (existingProductCategory == null) throw new Exception("No such product category");
-
-            existingProductCategory.Name = productCategory.Name;
-            CatalogSubCategory parentSubCategory = CatalogContext.CatalogSubCategories.FirstOrDefault(sc =>
-                sc.CatalogSubCategoryId == productCategory.ParentSubCategory.CatalogSubCategoryId);
-            existingProductCategory.ParentSubCategory = parentSubCategory;
-            await CatalogContext.SaveChangesAsync();
         }
     }
 }

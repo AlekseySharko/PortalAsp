@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.CatalogCategories;
 using PortalAsp.EfCore.Catalog;
+using PortalAsp.EfCore.Catalog.Repositories;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Products;
 using Xunit;
@@ -14,29 +15,38 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 {
     public class CatalogSubCategoryControllerTests
     {
+        private static CatalogSubCategoryController GetController()
+        {
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            var mockObj = mock.Object;
+
+            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory()
+            {
+                CatalogSubCategoryId = 32423414,
+                Name = "Initial Sub Category"
+            }, new CatalogSubCategory()
+            {
+                CatalogSubCategoryId = 1412,
+                Name = "Second Sub Category"
+            });
+            mockObj.CatalogSubCategories = subCategoriesSet;
+            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
+            {
+                CatalogMainCategoryId = 2134,
+                Name = "Initial Main Category",
+                ImageAddress = "httpfsdaf.png"
+            });
+            mockObj.CatalogMainCategories = dbSet;
+
+            return new CatalogSubCategoryController(new EfSubCategoryRepository(mockObj), new EfMainCategoryRepository(mockObj));
+        }
+
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
         public async Task PostSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            var mockObj = mock.Object;
-
-            DbSet<CatalogMainCategory> mainCategorySet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
-            {
-                CatalogMainCategoryId = 1,
-                Name = "Initial Main Category"
-            });
-            mockObj.CatalogMainCategories = mainCategorySet;
-
-            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory
-            {
-                CatalogSubCategoryId = 2,
-                Name = "Initial Sub Category"
-            });
-            mockObj.CatalogSubCategories = subCategoriesSet;
-
-            CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
+            CatalogSubCategoryController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PostSubcategory(subCategory, mainCategoryId);
@@ -56,7 +66,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         CatalogSubCategoryId = 0,
                         Name = "Name"
                     },
-                    1,
+                    2134,
                     "OkResult"
                 };
                 yield return new object[]
@@ -65,7 +75,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         Name = "Name"
                     },
-                    1,
+                    2134,
                     "OkResult"
                 };
 
@@ -73,7 +83,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                 yield return new object[]
                 {
                     new CatalogSubCategory(),
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
 
@@ -96,7 +106,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         CatalogSubCategoryId = 1,
                         Name = "Name"
                     },
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
 
@@ -107,7 +117,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         Name = "  "
                     },
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
                 yield return new object[]
@@ -116,7 +126,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         Name = "Initial sub category"
                     },
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
                 yield return new object[]
@@ -125,7 +135,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                     {
                         Name = "Initial ub category"
                     },
-                    1,
+                    2134,
                     "OkResult"
                 };
 
@@ -137,7 +147,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         Name = "Name",
                         ProductCategories = new List<ProductCategory>()
                     },
-                    1,
+                    2134,
                     "OkResult"
                 };
                 yield return new object[]
@@ -147,7 +157,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         Name = "Name",
                         ProductCategories = new List<ProductCategory>{new ProductCategory()}
                     },
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
 
@@ -159,7 +169,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
                         Name = "Name",
                         ParentMainCategory = new CatalogMainCategory()
                     },
-                    1,
+                    2134,
                     "BadRequestObjectResult"
                 };
             }
@@ -172,28 +182,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
         public async Task PutSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            var mockObj = mock.Object;
-
-            DbSet<CatalogSubCategory> subCategoriesSet = TestHelper.GetQueryableMockDbSet(new CatalogSubCategory()
-            {
-                CatalogSubCategoryId = 32423414,
-                Name = "Initial Sub Category"
-            }, new CatalogSubCategory()
-            {
-                CatalogSubCategoryId = 1412,
-                Name = "Second Sub Category"
-            });
-            mockObj.CatalogSubCategories = subCategoriesSet;
-            DbSet<CatalogMainCategory> dbSet = TestHelper.GetQueryableMockDbSet(new CatalogMainCategory
-            {
-                CatalogMainCategoryId = 2134,
-                Name = "Initial Main Category",
-                ImageAddress = "httpfsdaf.png"
-            });
-            mockObj.CatalogMainCategories = dbSet;
-
-            CatalogSubCategoryController controller = new CatalogSubCategoryController(mockObj);
+            CatalogSubCategoryController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PutSubcategory(subCategory);

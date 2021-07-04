@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using PortalModels.Catalog.Products;
 
-namespace PortalAsp.Controllers.Validators.Catalog
+namespace PortalAsp.Validators.Catalog
 {
     public class ManufacturerValidator
     {

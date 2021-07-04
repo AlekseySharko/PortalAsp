@@ -3,12 +3,12 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iis": {
-      "applicationUrl": "http://0.0.0.0:5000",
+      "applicationUrl": "http://localhost/PortalAsp",
       "sslPort": 0
     },
     "iisExpress": {
-      "applicationUrl": "http://localhost:5000",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:12342",
+      "sslPort": 5000
     }
   },
   "profiles": {
@@ -17,25 +17,30 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "sqlDebugging": false,
+      "jsWebView2Debugging": false
     },
     "PortalAsp": {
-      "commandName": "Project",
+      "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://0.0.0.0:5000"
+      "applicationUrl": "https://localhost:5000;http://localhost:5001"
     },
     "WSL 2": {
       "commandName": "WSL2",
       "launchBrowser": true,
       "launchUrl": "http://0.0.0.0:5000",
       "environmentVariables": {
-        "ASPNETCORE_URLS": "http://0.0.0.0:5000",
+        "ASPNETCORE_URLS": "https://localhost:5000",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "distributionName": ""
+    },
+    "New ISS Profile": {
+      "commandName": "IISExpress"
     }
   }
 }

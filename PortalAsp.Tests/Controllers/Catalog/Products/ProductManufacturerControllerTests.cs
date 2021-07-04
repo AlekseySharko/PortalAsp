@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PortalAsp.Controllers.Catalog.Products;
 using PortalAsp.EfCore.Catalog;
+using PortalAsp.EfCore.Catalog.Repositories;
 using PortalModels.Catalog.Products;
 using Xunit;
 
@@ -13,21 +14,31 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 {
     public class ProductManufacturerControllerTests
     {
+        private static ProductManufacturerController GetController()
+        {
+            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
+            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
+            {
+                ManufacturerId = 5624,
+                Name = "Initial Manufacturer",
+                Country = "USA",
+            }, new Manufacturer
+            {
+                ManufacturerId = 123,
+                Name = "Second Initial Manufacturer",
+                Country = "USA",
+            });
+            var mockObj = mock.Object;
+            mockObj.Manufacturers = dbSet;
+            return new ProductManufacturerController(new EfManufacturerRepository(mockObj));
+        }
+
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
         public async Task PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
-            {
-                ManufacturerId = 1,
-                Name = "Initial Manufacturer",
-                Country = "USA"
-            });
-            var mockObj = mock.Object;
-            mockObj.Manufacturers = dbSet;
-            ProductManufacturerController controller = new ProductManufacturerController(mockObj);
+            ProductManufacturerController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PostManufacturer(manufacturer);
@@ -55,7 +66,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
                 {
                     Name = "Name",
                     Country = "Country",
-                    ManufacturerId = 123
+                    ManufacturerId = 5624
                 }, "BadRequestObjectResult" };
 
                 //Name
@@ -93,21 +104,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         public async Task PutManufacturer_DropsBadRequestOnPutInvalidManufacturer(Manufacturer manufacturer, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
-            {
-                ManufacturerId = 5624,
-                Name = "Initial Manufacturer",
-                Country = "USA",
-            }, new Manufacturer
-            {
-                ManufacturerId = 123,
-                Name = "Second Initial Manufacturer",
-                Country = "USA",
-            });
-            var mockObj = mock.Object;
-            mockObj.Manufacturers = dbSet;
-            ProductManufacturerController controller = new ProductManufacturerController(mockObj);
+            ProductManufacturerController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.PutManufacturer(manufacturer);
@@ -186,16 +183,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         public async Task PostManufacturer_DropsBadRequestOnInvalidManufacturer(long manufacturerId, string resultType)
         {
             //Arrange
-            Mock<CatalogContext> mock = new Mock<CatalogContext>(new DbContextOptions<CatalogContext>());
-            DbSet<Manufacturer> dbSet = TestHelper.GetQueryableMockDbSet(new Manufacturer
-            {
-                ManufacturerId = 321,
-                Name = "Initial Manufacturer",
-                Country = "USA"
-            });
-            var mockObj = mock.Object;
-            mockObj.Manufacturers = dbSet;
-            ProductManufacturerController controller = new ProductManufacturerController(mockObj);
+            ProductManufacturerController controller = GetController();
 
             //Act
             IActionResult postResult = await controller.DeleteManufacturer(manufacturerId);
@@ -209,8 +197,8 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
             public IEnumerator<object[]> GetEnumerator()
             {
                 //Control
-                yield return new object[] { 321 , "OkResult" };
-                yield return new object[] { 333, "BadRequestObjectResult" };
+                yield return new object[] { 5624, "OkResult" };
+                yield return new object[] { 562, "BadRequestObjectResult" };
                 yield return new object[] { 111, "BadRequestObjectResult" };
             }
 
