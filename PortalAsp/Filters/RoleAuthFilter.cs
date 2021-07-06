@@ -18,6 +18,8 @@ namespace PortalAsp.Filters
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
+            if(CheckForOtherAuthAttributes(context)) return;
+            
             if (!context.HttpContext.User.Identity.IsAuthenticated)
             {
                 context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
@@ -31,8 +33,31 @@ namespace PortalAsp.Filters
 
             if (!result)
             {
-                context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
+                context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
+        }
+
+        private bool CheckForOtherAuthAttributes(AuthorizationFilterContext context)
+        {
+            if (MetadataContainsCheck(context, "Microsoft.AspNetCore.Authorization.AuthorizeAttribute"))
+            {
+                return true;
+            }
+            if (MetadataContainsCheck(context, "Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool MetadataContainsCheck(AuthorizationFilterContext context, string searchFor)
+        {
+            if (context.ActionDescriptor.EndpointMetadata.FirstOrDefault(m => m != null && m.ToString() == searchFor) != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

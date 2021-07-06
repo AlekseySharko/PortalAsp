@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PortalAsp.Filters;
 using PortalModels;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
@@ -9,8 +10,8 @@ using PortalModels.Validators.Catalog;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {
+    [RoleAuthFilter("Catalog Moderator")]
     [Route("api/catalog/sub-categories")]
-    //[Authorize(Roles = "CatalogModerator")]
     public class CatalogSubCategoryController : Controller
     {
         private ISubCategoryRepository SubCategoryRepository { get; }

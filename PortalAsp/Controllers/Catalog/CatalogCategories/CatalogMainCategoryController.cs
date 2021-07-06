@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PortalAsp.Filters;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
 using PortalModels.Validators;
@@ -8,6 +9,7 @@ using PortalModels.Validators.Catalog;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {
+    [RoleAuthFilter("Catalog Moderator")]
     [Route("api/catalog/main-categories")]
     public class CatalogMainCategoryController : Controller
     {
@@ -17,7 +19,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             MainCategoryRepository = mainCategoryRepository;
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false,
             [FromQuery] bool includeProductCategories = false)
         {
