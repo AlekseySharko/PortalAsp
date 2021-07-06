@@ -19,7 +19,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
             MainCategoryRepository = mainCategoryRepository;
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false,
             [FromQuery] bool includeProductCategories = false)
         {

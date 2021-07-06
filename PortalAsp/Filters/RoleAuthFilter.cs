@@ -16,6 +16,7 @@ namespace PortalAsp.Filters
 
         public RoleAuthFilter(string requiredRole) => RequiredRole = requiredRole;
 
+        //TODO - test
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             if(CheckForOtherAuthAttributes(context)) return;
