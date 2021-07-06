@@ -1,19 +1,17 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PortalAsp.Validators;
-using PortalAsp.Validators.Authentication;
 using PortalModels;
 using PortalModels.Authentication;
+using PortalModels.Validators;
+using PortalModels.Validators.Authentication;
 
-namespace PortalAsp.Controllers.Authentication
+namespace PortalAsp.Controllers.Auth
 {
-    [Route("api/catalog/authentication")]
-    public class AuthenticationController : Controller
+    [Route("api/auth")]
+    public class AuthController : Controller
     {
         private IUserAuthenticator AuthenticationService { get; }
-        public AuthenticationController(IUserAuthenticator authenticationService)
+        public AuthController(IUserAuthenticator authenticationService)
         {
             AuthenticationService = authenticationService;
         }
@@ -38,9 +36,9 @@ namespace PortalAsp.Controllers.Authentication
             ValidationResult validationResult = AuthenticationValidator.ValidateOnLogIn(user);
             if (!validationResult.IsValid) return BadRequest(validationResult.Message);
 
-            await AuthenticationService.LogIn(user);
-
-            return Ok();
+            LoginSuccessfulData loginData = await AuthenticationService.LogInOrReturnNull(user);
+            if (loginData == null) return BadRequest("Wrong user or password");
+            return Ok(loginData);
         }
     }
 }

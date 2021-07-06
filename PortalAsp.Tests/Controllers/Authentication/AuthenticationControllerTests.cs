@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using PortalAsp.Controllers.Authentication;
+using PortalAsp.Controllers.Auth;
 using PortalModels;
 using PortalModels.Authentication;
 using Xunit;
@@ -19,7 +19,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
             //Arrange
             Mock<IUserAuthenticator> mock = new Mock<IUserAuthenticator>();
             mock.Setup(c => c.SignUp(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new GeneralResult {Success = true});
-            AuthenticationController controller = new AuthenticationController(mock.Object);
+            AuthController controller = new AuthController(mock.Object);
 
             //Act
             IActionResult postResult = await controller.SignUp(user);
@@ -48,7 +48,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "123456",
+                        UserName =  "123456",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
@@ -63,118 +63,61 @@ namespace PortalAsp.Tests.Controllers.Authentication
                     "User is null"
                 };
 
-                //Login
+                //UserName
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "1234",
+                        UserName =  "1234",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
                     false,
-                    "Login must be 5-30 characters long. "
+                    "UserName must be 5-30 characters long. "
                 };
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "1234sadfasdfasdfafasdfasdfasdfasdfasdsdfasafsdfasdfadsfasdfsdafasdfasdfasdfasdfasdf",
+                        UserName =  "1234sadfasdfasdfafasdfasdfasdfasdfasdsdfasafsdfasdfadsfasdfsdafasdfasdfasdfasdfasdf",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
                     false,
-                    "Login must be 5-30 characters long. "
+                    "UserName must be 5-30 characters long. "
                 };
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "1234sadfa sdfasdfafa",
+                        UserName =  "1234sadfa sdfasdfafa",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
                     false,
-                    "Login can't contain spaces and quotes(\",')"
+                    "UserName can't contain spaces and quotes(\",')"
                 };
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "1234sadfa\"sdfasdfafa",
+                        UserName =  "1234sadfa\"sdfasdfafa",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
                     false,
-                    "Login can't contain spaces and quotes(\",')"
+                    "UserName can't contain spaces and quotes(\",')"
                 };
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "1234sadfa'sdfasdfafa",
+                        UserName =  "1234sadfa'sdfasdfafa",
                         Email = "myemail@gmail.com",
                         Password = "Avcdf12345"
                     },
                     false,
-                    "Login can't contain spaces and quotes(\",')"
-                };
-
-                //Password
-                yield return new object[]
-                {
-                    new AuthenticationUserData
-                    {
-                        Login = "123456",
-                        Email = "myemail@gmail.com",
-                        Password = "Avcdf1"
-                    },
-                    false,
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. "
-                };
-                yield return new object[]
-                {
-                    new AuthenticationUserData
-                    {
-                        Login = "123456",
-                        Email = "myemail@gmail.com",
-                        Password = "Avcdf1fadsfasdfhekjqfh23hfkjhsedajkfhsdhajvnbsjkdfdashbvasjhfhewjkfhsdfla"
-                    },
-                    false,
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. "
-                };
-                yield return new object[]
-                {
-                    new AuthenticationUserData
-                    {
-                        Login = "123456",
-                        Email = "myemail@gmail.com",
-                        Password = "avcdf12345"
-                    },
-                    false,
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. "
-                };
-                yield return new object[]
-                {
-                    new AuthenticationUserData
-                    {
-                        Login = "123456",
-                        Email = "myemail@gmail.com",
-                        Password = "Avcdfdafdsfasg"
-                    },
-                    false,
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. "
-                };
-                yield return new object[]
-                {
-                    new AuthenticationUserData
-                    {
-                        Login = "123456",
-                        Email = "myemail@gmail.com",
-                        Password = "AFDSF12345"
-                    },
-                    false,
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. "
+                    "UserName can't contain spaces and quotes(\",')"
                 };
 
                 //Email
@@ -182,7 +125,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "123456",
+                        UserName =  "123456",
                         Email = "myemai.com",
                         Password = "Avcdf12345"
                     },
@@ -193,7 +136,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "123456",
+                        UserName =  "123456",
                         Email = "myemai",
                         Password = "Avcdf12345"
                     },
@@ -215,7 +158,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
             //Arrange
             Mock<IUserAuthenticator> mock = new Mock<IUserAuthenticator>();
             mock.Setup(c => c.SignUp(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new GeneralResult { Success = true });
-            AuthenticationController controller = new AuthenticationController(mock.Object);
+            AuthController controller = new AuthController(mock.Object);
 
             //Act
             IActionResult postResult = await controller.LogIn(user);
@@ -226,7 +169,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
             if (isOk)
             {
                 Assert.NotNull(okResult);
-                mock.Verify(m => m.LogIn(It.IsAny<AuthenticationUserData>()), Times.Once);
+                mock.Verify(m => m.LogInOrReturnNull(It.IsAny<AuthenticationUserData>()), Times.Once);
             }
             else
             {
@@ -244,7 +187,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "123456",
+                        UserName =  "123456",
                         Password = "Avcdf12345"
                     },
                     true
@@ -258,12 +201,12 @@ namespace PortalAsp.Tests.Controllers.Authentication
                     "User is null"
                 };
 
-                //Login
+                //UserName
                 yield return new object[]
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "",
+                        UserName =  "",
                         Password = "Avcdf12345"
                     },
                     false,
@@ -275,7 +218,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        Login =  "123441241",
+                        UserName =  "123441241",
                         Password = ""
                     },
                     false,

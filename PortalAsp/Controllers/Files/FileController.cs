@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using PortalAsp.Validators.Catalog;
+using PortalModels.Validators.Catalog;
 
 namespace PortalAsp.Controllers.Files
 {

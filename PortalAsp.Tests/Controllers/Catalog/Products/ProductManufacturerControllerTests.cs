@@ -35,7 +35,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public async Task PostManufacturer_DropsBadRequestOnAddInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        public async Task PostManufacturer_Validation(Manufacturer manufacturer, string resultType)
         {
             //Arrange
             ProductManufacturerController controller = GetController();
@@ -101,7 +101,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public async Task PutManufacturer_DropsBadRequestOnPutInvalidManufacturer(Manufacturer manufacturer, string resultType)
+        public async Task PutManufacturer_Validation(Manufacturer manufacturer, string resultType)
         {
             //Arrange
             ProductManufacturerController controller = GetController();
@@ -180,7 +180,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
 
         [Theory]
         [ClassData(typeof(BadDeleteRequestTestData))]
-        public async Task PostManufacturer_DropsBadRequestOnInvalidManufacturer(long manufacturerId, string resultType)
+        public async Task DeleteManufacturer_Validation(long manufacturerId, string resultType)
         {
             //Arrange
             ProductManufacturerController controller = GetController();

@@ -53,7 +53,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.Products
         //TODO - edit validation tests
         [Theory]
         [ClassData(typeof(BadRequestTestData))]
-        public async Task PostProduct_DropsBadRequestOnInvalidProductOrProductCategoryId(
+        public async Task PostProduct_Validation(
             Product product, int productCategoryId, bool isOk, string errorMessage = "")
         {
             //Arrange

@@ -29,7 +29,7 @@ namespace PortalAsp
                     });
             });
             services.AddEfCatalogRepositories();
-            services.ConfigureIdentity(Configuration);
+            services.AddEfAuthentication(Configuration);
             services.AddControllers().AddNewtonsoftJson();
         }
         
@@ -41,7 +41,10 @@ namespace PortalAsp
                 app.UseDeveloperExceptionPage();
             }
             app.UseStaticFiles();
+
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             if (env.IsDevelopment())
             {

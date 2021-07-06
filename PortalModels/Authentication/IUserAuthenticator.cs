@@ -4,7 +4,8 @@ namespace PortalModels.Authentication
 {
     public interface IUserAuthenticator
     {
-        Task<bool> LogIn(AuthenticationUserData user);
+        Task<LoginSuccessfulData> LogInOrReturnNull(AuthenticationUserData user);
         Task<GeneralResult> SignUp(AuthenticationUserData user);
+        Task<bool> CheckRole(string userId, string userRole);
     }
 }

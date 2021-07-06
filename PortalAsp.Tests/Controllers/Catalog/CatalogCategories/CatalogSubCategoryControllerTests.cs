@@ -43,7 +43,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public async Task PostSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
+        public async Task PostSubCategory_Validation(CatalogSubCategory subCategory, int mainCategoryId, string resultType)
         {
             //Arrange
             CatalogSubCategoryController controller = GetController();
@@ -179,7 +179,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public async Task PutSubCategory_DropsBadRequestOnInvalidSubCategoryOrMainCategoryId(CatalogSubCategory subCategory, string resultType)
+        public async Task PutSubCategory_Validation(CatalogSubCategory subCategory, string resultType)
         {
             //Arrange
             CatalogSubCategoryController controller = GetController();

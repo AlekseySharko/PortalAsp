@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PortalAsp.Validators;
-using PortalAsp.Validators.Catalog;
 using PortalModels;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
+using PortalModels.Validators;
+using PortalModels.Validators.Catalog;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {

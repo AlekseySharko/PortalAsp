@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using PortalModels.Authentication;
 
-namespace PortalAsp.Validators.Authentication
+namespace PortalModels.Validators.Authentication
 {
     public class AuthenticationValidator
     {
@@ -20,26 +20,16 @@ namespace PortalAsp.Validators.Authentication
                 return result;
             }
 
-            if (string.IsNullOrWhiteSpace(user.Login) || user.Login.Length < 5 || user.Login.Length > 30)
+            if (string.IsNullOrWhiteSpace(user.UserName) || user.UserName.Length < 5 || user.UserName.Length > 30)
             {
                 result.IsValid = false;
-                result.Message += "Login must be 5-30 characters long. ";
+                result.Message += "UserName must be 5-30 characters long. ";
             }
 
-            if (user.Login is null || Regex.Match(user.Login, ".* +.*|.*'+.*|.*\"+.*", RegexOptions.ECMAScript).Success)
+            if (user.UserName is null || Regex.Match(user.UserName, ".* +.*|.*'+.*|.*\"+.*", RegexOptions.ECMAScript).Success)
             {
                 result.IsValid = false;
-                result.Message += "Login can't contain spaces and quotes(\",')";
-            }
-
-            if (string.IsNullOrWhiteSpace(user.Password) ||
-                user.Password.Length < 8 ||
-                user.Password.Length > 30 ||
-                !Regex.Match(user.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", RegexOptions.ECMAScript).Success)
-            {
-                result.IsValid = false;
-                result.Message +=
-                    "Password must be 8-30 characters long and contain at least 1 upper case character, 1 lower case character and one digit. ";
+                result.Message += "UserName can't contain spaces and quotes(\",')";
             }
 
             if (!IsValidEmail(user.Email))
@@ -66,7 +56,7 @@ namespace PortalAsp.Validators.Authentication
                 return result;
             }
 
-            if (string.IsNullOrWhiteSpace(user.Login) || string.IsNullOrWhiteSpace(user.Password))
+            if (string.IsNullOrWhiteSpace(user.UserName) || string.IsNullOrWhiteSpace(user.Password))
             {
                 result.IsValid = false;
                 result.Message += "Wrong login or password. ";

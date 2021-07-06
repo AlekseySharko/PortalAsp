@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PortalAsp.Validators.Catalog
+namespace PortalModels.Validators.Catalog
 {
     public class ImageAddressValidator
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using PortalModels.Catalog.CatalogCategories;
 
-namespace PortalAsp.Validators.Catalog
+namespace PortalModels.Validators.Catalog
 {
     public class CatalogMainCategoryValidator
     {

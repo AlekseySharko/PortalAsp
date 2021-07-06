@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PortalModels.Catalog.CatalogCategories;
 
-namespace PortalAsp.Validators.Catalog.CircularReferenceBreakers
+namespace PortalModels.Validators.Catalog.CircularReferenceBreakers
 {
     public static class CatalogRefBreaker
     {

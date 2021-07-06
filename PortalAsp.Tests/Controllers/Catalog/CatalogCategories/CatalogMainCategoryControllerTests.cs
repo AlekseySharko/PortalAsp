@@ -36,7 +36,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPostRequestTestData))]
-        public async Task PostMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        public async Task PostMainCategory_Validation(CatalogMainCategory mainCategory, string resultType)
         {
             CatalogMainCategoryController controller = SetUpMock();
 
@@ -133,7 +133,7 @@ namespace PortalAsp.Tests.Controllers.Catalog.CatalogCategories
 
         [Theory]
         [ClassData(typeof(BadPutRequestTestData))]
-        public async Task PutMainCategory_DropsBadRequestOnInvalidMainCategory(CatalogMainCategory mainCategory, string resultType)
+        public async Task PutMainCategory_Validation(CatalogMainCategory mainCategory, string resultType)
         {
             //Arrange
             CatalogMainCategoryController controller = SetUpMock();

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PortalAsp.Validators;
-using PortalAsp.Validators.Catalog;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
+using PortalModels.Validators;
+using PortalModels.Validators.Catalog;
 
 namespace PortalAsp.Controllers.Catalog.CatalogCategories
 {
@@ -12,11 +12,14 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
     public class CatalogMainCategoryController : Controller
     {
         public IMainCategoryRepository MainCategoryRepository { get; set; }
-        public CatalogMainCategoryController(IMainCategoryRepository mainCategoryRepository) => MainCategoryRepository = mainCategoryRepository;
+
+        public CatalogMainCategoryController(IMainCategoryRepository mainCategoryRepository) =>
+            MainCategoryRepository = mainCategoryRepository;
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false, [FromQuery] bool includeProductCategories = false)
+        public IActionResult GetMainCategories([FromQuery] bool includeSubcategories = false,
+            [FromQuery] bool includeProductCategories = false)
         {
             return Ok(MainCategoryRepository.GetAllCategories(includeSubcategories, includeProductCategories));
         }
