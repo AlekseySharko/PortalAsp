@@ -61,7 +61,8 @@ namespace PortalAsp.Controllers.Files
             }
             return Ok(resultUrls);
         }
-        public string RandomString(int length)
+
+        private string RandomString(int length)
         {
             Random random = new Random();
             const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
