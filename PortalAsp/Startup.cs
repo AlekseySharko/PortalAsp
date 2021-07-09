@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,11 @@ namespace PortalAsp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("", async context =>
+                {
+                    await Task.CompletedTask;
+                    context.Response.Redirect("/swagger");
+                }); //Temporary swagger redirect
             });
             app.UseSwagger();
             app.UseSwaggerUI(options => {
