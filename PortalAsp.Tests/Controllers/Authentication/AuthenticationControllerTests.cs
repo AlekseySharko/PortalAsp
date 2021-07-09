@@ -125,7 +125,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        UserName =  "123456",
+                        UserName =  "12345",
                         Email = "myemai.com",
                         Password = "Avcdf12345"
                     },
@@ -136,7 +136,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        UserName =  "123456",
+                        UserName =  "12345",
                         Email = "myemai",
                         Password = "Avcdf12345"
                     },
@@ -157,7 +157,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
         {
             //Arrange
             Mock<IUserAuthenticator> mock = new Mock<IUserAuthenticator>();
-            mock.Setup(c => c.SignUp(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new GeneralResult { Success = true });
+            mock.Setup(c => c.LogInOrReturnNull(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new LoginSuccessfulData());
             AuthController controller = new AuthController(mock.Object);
 
             //Act
@@ -187,7 +187,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
                 {
                     new AuthenticationUserData
                     {
-                        UserName =  "123456",
+                        UserName =  "12345",
                         Password = "Avcdf12345"
                     },
                     true

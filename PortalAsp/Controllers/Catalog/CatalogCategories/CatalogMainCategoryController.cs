@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalAsp.Filters;
 using PortalModels.Catalog.CatalogCategories;
@@ -27,6 +28,8 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
@@ -39,6 +42,8 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutMainCategory([FromBody] CatalogMainCategory mainCategory)
         {
             ValidationResult validationResult =
@@ -51,6 +56,8 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteMainCategory([FromRoute] long id)
         {
             CatalogMainCategory mainCategory = new CatalogMainCategory {CatalogMainCategoryId = id};
