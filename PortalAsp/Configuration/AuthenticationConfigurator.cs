@@ -10,7 +10,7 @@ namespace PortalAsp.Configuration
 {
     public static class AuthenticationConfigurator
     {
-        public static void AddEfAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddEfIdentityAndAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.ConfigureIdentity(configuration);
             services.AddScoped<IJwtGenerator, JwtGenerator>();

@@ -12,8 +12,8 @@ namespace PortalAsp.Controllers.Catalog.Products
     [Route("api/catalog/product-categories")]
     public class ProductCategoryController : Controller
     {
-        public IProductCategoryRepository ProductCategoryRepository { get; set; }
-        public ISubCategoryRepository SubCategoryRepository { get; set; }
+        private IProductCategoryRepository ProductCategoryRepository { get; }
+        private ISubCategoryRepository SubCategoryRepository { get; }
 
         public ProductCategoryController(IProductCategoryRepository productCategoryRepository,
             ISubCategoryRepository subCategoryRepository)

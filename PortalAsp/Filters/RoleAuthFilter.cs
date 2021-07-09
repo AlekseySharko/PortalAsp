@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +10,8 @@ using PortalModels.Authentication;
 
 namespace PortalAsp.Filters
 {
-    public class RoleAuthFilter : Attribute, IAsyncAuthorizationFilter, IOrderedFilter
+    public class RoleAuthFilter : Attribute, IAsyncAuthorizationFilter
     {
-        public int Order { get; set; } = 4;
         private string RequiredRole { get; }
 
         public RoleAuthFilter(string requiredRole) => RequiredRole = requiredRole;
@@ -29,7 +29,7 @@ namespace PortalAsp.Filters
             
             IUserAuthenticator authService = context.HttpContext.RequestServices.GetService<IUserAuthenticator>();
             string userId =
-                context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value;
+                context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             bool result = await authService.CheckRole(userId, RequiredRole);
 
             if (!result)

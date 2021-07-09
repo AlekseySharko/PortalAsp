@@ -13,7 +13,7 @@ namespace PortalAsp.Controllers.Catalog.CatalogCategories
     [Route("api/catalog/main-categories")]
     public class CatalogMainCategoryController : Controller
     {
-        public IMainCategoryRepository MainCategoryRepository { get; set; }
+        private IMainCategoryRepository MainCategoryRepository { get; }
 
         public CatalogMainCategoryController(IMainCategoryRepository mainCategoryRepository) =>
             MainCategoryRepository = mainCategoryRepository;

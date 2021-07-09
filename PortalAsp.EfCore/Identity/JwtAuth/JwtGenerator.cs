@@ -19,7 +19,7 @@ namespace PortalAsp.EfCore.Identity.JwtAuth
 
         public string CreateToken(string id)
         {
-            var claims = new List<Claim> { new Claim("userid", id) };
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, id) };
 
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

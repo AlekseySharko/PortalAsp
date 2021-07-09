@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using PortalAsp.Configuration;
 using PortalAsp.EfCore.Catalog;
 using PortalAsp.Middleware;
@@ -29,19 +32,19 @@ namespace PortalAsp
                     });
             });
             services.AddEfCatalogRepositories();
-            services.AddEfAuthentication(Configuration);
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddEfIdentityAndAuthentication(Configuration);
+            services.AddSwaggerV1();
+            services.AddControllers().AddNewtonsoftJson(opt =>
+            {
+                opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            });
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseDeveloperExceptionPage();
             app.UseMiddleware<HttpsOnlyMiddleware>();
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -55,7 +58,10 @@ namespace PortalAsp
             {
                 endpoints.MapControllers();
             });
-            
+            app.UseSwagger();
+            app.UseSwaggerUI(options => {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Globy Api");
+            });
         }
 
         public Startup(IConfiguration config)
