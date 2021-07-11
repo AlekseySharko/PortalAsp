@@ -20,7 +20,7 @@ namespace PortalAsp.EfCore.Identity
             JwtGenerator = jwtGenerator;
         }
 
-        public async Task<LoginSuccessfulData> LogInOrReturnNull(AuthenticationUserData authUser)
+        public async Task<LoginSuccessfulData> LogInOrReturnNullAsync(AuthenticationUserData authUser)
         {
             var newUser = await UserManager.FindByNameAsync(authUser.UserName);
             if (newUser == null)
@@ -42,7 +42,7 @@ namespace PortalAsp.EfCore.Identity
             return null;
         }
 
-        public async Task<GeneralResult> SignUp(AuthenticationUserData singUpData)
+        public async Task<GeneralResult> SignUpAsync(AuthenticationUserData singUpData)
         {
             IdentityUser newUser =
                 new IdentityUser { UserName = singUpData.UserName, Email = singUpData.Email };
@@ -61,9 +61,9 @@ namespace PortalAsp.EfCore.Identity
             return returnResult;
         }
 
-        public async Task<bool> CheckRole(string userId, string userRole)
+        public async Task<bool> CheckRoleAsync(string userId, string userRole)
         {
-            if (userId is null || userRole is null)
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                 return false;
 
             IdentityUser user = await UserManager.FindByIdAsync(userId);

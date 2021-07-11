@@ -27,7 +27,7 @@ namespace PortalAsp.EfCore.Identity.JwtAuth
                 "https://localhost:5000",
                 "http://localhost:4200/",
                 claims,
-                expires: DateTime.Now.AddMinutes(20),
+                expires: DateTime.Now.AddDays(90),
                 signingCredentials: credentials
             );
             var tokenHandler = new JwtSecurityTokenHandler();

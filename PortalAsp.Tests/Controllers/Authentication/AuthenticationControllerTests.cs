@@ -18,7 +18,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
         {
             //Arrange
             Mock<IUserAuthenticator> mock = new Mock<IUserAuthenticator>();
-            mock.Setup(c => c.SignUp(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new GeneralResult {Success = true});
+            mock.Setup(c => c.SignUpAsync(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new GeneralResult {Success = true});
             AuthController controller = new AuthController(mock.Object);
 
             //Act
@@ -30,7 +30,7 @@ namespace PortalAsp.Tests.Controllers.Authentication
             if (isOk)
             {
                 Assert.NotNull(okResult);
-                mock.Verify(m => m.SignUp(It.IsAny<AuthenticationUserData>()), Times.Once);
+                mock.Verify(m => m.SignUpAsync(It.IsAny<AuthenticationUserData>()), Times.Once);
             }
             else
             {
@@ -157,19 +157,19 @@ namespace PortalAsp.Tests.Controllers.Authentication
         {
             //Arrange
             Mock<IUserAuthenticator> mock = new Mock<IUserAuthenticator>();
-            mock.Setup(c => c.LogInOrReturnNull(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new LoginSuccessfulData());
+            mock.Setup(c => c.LogInOrReturnNullAsync(It.IsAny<AuthenticationUserData>())).ReturnsAsync(new LoginSuccessfulData());
             AuthController controller = new AuthController(mock.Object);
 
             //Act
             IActionResult postResult = await controller.LogIn(user);
-            OkResult okResult = postResult as OkResult;
+            OkObjectResult okResult = postResult as OkObjectResult;
             BadRequestObjectResult badRequestResult = postResult as BadRequestObjectResult;
-
+            
             //Assert
             if (isOk)
             {
                 Assert.NotNull(okResult);
-                mock.Verify(m => m.LogInOrReturnNull(It.IsAny<AuthenticationUserData>()), Times.Once);
+                mock.Verify(m => m.LogInOrReturnNullAsync(It.IsAny<AuthenticationUserData>()), Times.Once);
             }
             else
             {

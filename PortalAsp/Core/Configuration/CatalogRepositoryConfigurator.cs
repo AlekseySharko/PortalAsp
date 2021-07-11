@@ -3,7 +3,7 @@ using PortalAsp.EfCore.Catalog.Repositories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
 using PortalModels.Catalog.Repositories.Products;
 
-namespace PortalAsp.Configuration
+namespace PortalAsp.Core.Configuration
 {
     public static class CatalogRepositoryConfigurator
     {

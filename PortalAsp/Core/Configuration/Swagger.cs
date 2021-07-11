@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace PortalAsp.Configuration
+namespace PortalAsp.Core.Configuration
 {
     public static class Swagger
     {

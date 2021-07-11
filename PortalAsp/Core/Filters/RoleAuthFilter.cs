@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using PortalAsp.Core.Helpers.IdentityExtensions;
 using PortalModels.Authentication;
 
-namespace PortalAsp.Filters
+namespace PortalAsp.Core.Filters
 {
     public class RoleAuthFilter : Attribute, IAsyncAuthorizationFilter
     {
@@ -28,9 +28,8 @@ namespace PortalAsp.Filters
             }
             
             IUserAuthenticator authService = context.HttpContext.RequestServices.GetService<IUserAuthenticator>();
-            string userId =
-                context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            bool result = await authService.CheckRole(userId, RequiredRole);
+            string userId = context.HttpContext.GetUserIdFromClaims();
+            bool result = await authService.CheckRoleAsync(userId, RequiredRole);
 
             if (!result)
             {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PortalAsp.EfCore.Identity.JwtAuth;
 
-namespace PortalAsp.Configuration
+namespace PortalAsp.Core.Configuration
 {
     public static class AuthenticationConfigurator
     {

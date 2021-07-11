@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PortalAsp.Filters;
+using PortalAsp.Core.Filters;
 using PortalModels.Catalog.CatalogCategories;
 using PortalModels.Catalog.Repositories.CatalogCategories;
 using PortalModels.Validators;

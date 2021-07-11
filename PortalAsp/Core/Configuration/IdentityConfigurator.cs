@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PortalAsp.EfCore.Identity;
 using PortalModels.Authentication;
 
-namespace PortalAsp.Configuration
+namespace PortalAsp.Core.Configuration
 {
     public static class IdentityConfigurator
     {

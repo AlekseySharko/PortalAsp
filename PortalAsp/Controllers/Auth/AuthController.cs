@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PortalAsp.Core.Helpers.IdentityExtensions;
 using PortalModels;
 using PortalModels.Authentication;
 using PortalModels.Validators;
@@ -23,7 +25,7 @@ namespace PortalAsp.Controllers.Auth
             ValidationResult validationResult = AuthenticationValidator.ValidateOnSignUp(user);
             if (!validationResult.IsValid) return BadRequest(validationResult.Message);
 
-            GeneralResult result = await AuthenticationService.SignUp(user);
+            GeneralResult result = await AuthenticationService.SignUpAsync(user);
             if (result.Success) return Ok();
 
             return BadRequest(result.Message);
@@ -36,9 +38,18 @@ namespace PortalAsp.Controllers.Auth
             ValidationResult validationResult = AuthenticationValidator.ValidateOnLogIn(user);
             if (!validationResult.IsValid) return BadRequest(validationResult.Message);
 
-            LoginSuccessfulData loginData = await AuthenticationService.LogInOrReturnNull(user);
-            if (loginData == null) return BadRequest("Wrong user or password");
+            LoginSuccessfulData loginData = await AuthenticationService.LogInOrReturnNullAsync(user);
+            if (loginData == null) return BadRequest("Wrong username or password");
             return Ok(loginData);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("role")]
+        public async Task<IActionResult> CheckRole([FromQuery] string role)
+        {
+            string id = HttpContext.GetUserIdFromClaims();
+            return Ok(await AuthenticationService.CheckRoleAsync(id, role));
         }
     }
 }

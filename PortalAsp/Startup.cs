@@ -6,9 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using PortalAsp.Configuration;
+using PortalAsp.Core.Configuration;
+using PortalAsp.Core.Middleware;
 using PortalAsp.EfCore.Catalog;
-using PortalAsp.Middleware;
 
 namespace PortalAsp
 {
@@ -41,17 +41,16 @@ namespace PortalAsp
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseDeveloperExceptionPage();
             app.UseMiddleware<HttpsOnlyMiddleware>();
             app.UseStaticFiles();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             if (env.IsDevelopment())
             {
                 app.UseCors("Angular");
             }
+            app.UseAuthentication();
+            app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
